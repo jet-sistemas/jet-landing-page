@@ -82,9 +82,8 @@ export function Header() {
                 size="lg"
                 className={cn(
                   "bg-linear-to-r transition-all duration-300 hover:font-extrabold",
-                  theme == "light"
-                    ? "from-secondary to-jet-gold hover:shadow-[0_0_30px_rgba(243,241,6,0.8)] "
-                    : "from-jet-gold to-jet-bronze hover:shadow-[0_0_30px_rgba(242,181,68,0.8)] text-white"
+                  "from-secondary to-jet-gold hover:shadow-[0_0_30px_rgba(243,241,6,0.8)]",
+                  "dark:from-jet-gold dark:to-jet-bronze dark:hover:shadow-[0_0_30px_rgba(242,181,68,0.8)] dark:text-white"
                 )}
               >
                 <Link href="#pre-cadastro">Torne-se um Parceiro</Link>
