@@ -217,8 +217,8 @@ export const contactInfo = {
   whatsappLink: "https://wa.me/5589994659400",
   email: "contato@jetassociacao.com.br",
   address: "Sul do Piauí, Brasil",
-  instagram: "@jet_associacao",
-  instagramLink: "https://instagram.com/jet_associacao",
+  instagram: "@associacaojet",
+  instagramLink: "https://instagram.com/associacaojet",
 };
 
 // Links de navegação

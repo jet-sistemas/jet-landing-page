@@ -10,6 +10,12 @@ import {
 } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 import { navLinks, contactInfo } from "@/lib/data";
 
 export function Footer() {
@@ -34,15 +40,13 @@ export function Footer() {
                 alt="J&T Associação"
                 width={48}
                 height={48}
-                className="size-12 brightness-0 invert"
+                className="size-12"
               />
               <div>
-                <span className="font-serif text-2xl font-bold">
+                <span className="font-serif text-secondary text-2xl font-bold">
                   Associação J&T
                 </span>
-                <p className="text-sm text-primary-foreground/70">
-                  Joyce e Teatino
-                </p>
+                <p className="text-sm text-accent">Joyce e Teatino</p>
               </div>
             </Link>
             <p className="mt-4 max-w-md text-primary-foreground/80">
@@ -53,36 +57,53 @@ export function Footer() {
 
             {/* Social links */}
             <div className="mt-6 flex gap-3">
-              <Button
-                asChild
-                variant="secondary"
-                size="icon"
-                className="bg-primary-foreground/10 text-primary-foreground hover:bg-primary-foreground/20"
-              >
-                <a
-                  href={contactInfo.instagramLink}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  aria-label="Instagram"
-                >
-                  <Instagram className="size-5" />
-                </a>
-              </Button>
-              <Button
-                asChild
-                variant="secondary"
-                size="icon"
-                className="bg-green-600 text-white hover:bg-green-700"
-              >
-                <a
-                  href={contactInfo.whatsappLink}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  aria-label="WhatsApp"
-                >
-                  <MessageCircle className="size-5" />
-                </a>
-              </Button>
+              <TooltipProvider>
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <Button
+                      asChild
+                      variant="secondary"
+                      size="icon"
+                      className="bg-primary-foreground/10 text-primary-foreground hover:bg-primary-foreground/20"
+                    >
+                      <a
+                        href={contactInfo.instagramLink}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        aria-label="Instagram"
+                      >
+                        <Instagram className="size-5" />
+                      </a>
+                    </Button>
+                  </TooltipTrigger>
+                  <TooltipContent>
+                    <p>Instagram</p>
+                  </TooltipContent>
+                </Tooltip>
+
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <Button
+                      asChild
+                      variant="secondary"
+                      size="icon"
+                      className="bg-primary-foreground/10 text-primary-foreground hover:bg-primary-foreground/20"
+                    >
+                      <a
+                        href={contactInfo.whatsappLink}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        aria-label="WhatsApp"
+                      >
+                        <MessageCircle className="size-5" />
+                      </a>
+                    </Button>
+                  </TooltipTrigger>
+                  <TooltipContent>
+                    <p>WhatsApp</p>
+                  </TooltipContent>
+                </Tooltip>
+              </TooltipProvider>
             </div>
           </div>
 
