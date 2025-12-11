@@ -21,10 +21,10 @@ export function Hero() {
           {/* Content */}
           <div className="flex max-w-2xl flex-col items-center text-center lg:items-start lg:text-left">
             {/* Badge */}
-            <div className="mb-6 inline-flex items-center gap-2 rounded-full border border-accent/30 bg-accent/10 px-4 py-1.5 text-sm font-medium text-accent">
+            <div className="mb-6 inline-flex items-center gap-2 rounded-full border border-jet-red/30 bg-jet-red/10 px-4 py-1.5 text-sm font-medium text-jet-red">
               <span className="relative flex size-2">
-                <span className="absolute inline-flex size-full animate-ping rounded-full bg-accent opacity-75" />
-                <span className="relative inline-flex size-2 rounded-full bg-accent" />
+                <span className="absolute inline-flex size-full animate-ping rounded-full bg-jet-red opacity-75" />
+                <span className="relative inline-flex size-2 rounded-full bg-jet-red" />
               </span>
               Associação Desportiva J&T
             </div>
@@ -32,11 +32,11 @@ export function Hero() {
             {/* Heading */}
             <h1 className="font-serif text-4xl font-bold leading-tight tracking-tight text-foreground sm:text-5xl md:text-6xl lg:text-7xl">
               Transformando{" "}
-              <span className="bg-gradient-to-r from-secondary via-accent to-primary bg-clip-text text-transparent">
+              <span className="bg-linear-to-r from-secondary via-jet-red to-primary bg-clip-text text-transparent">
                 vidas
               </span>{" "}
               através do{" "}
-              <span className="bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent">
+              <span className="bg-linear-to-r from-primary to-jet-red bg-clip-text text-transparent">
                 esporte
               </span>
             </h1>
@@ -57,7 +57,12 @@ export function Hero() {
                   <ArrowRight className="size-4 transition-transform group-hover:translate-x-1" />
                 </Link>
               </Button>
-              <Button asChild variant="outline" size="xl" className="group">
+              <Button
+                asChild
+                variant="secondary"
+                size="xl"
+                className="group bg-linear-to-r transition-all duration-300 from-secondary to-jet-gold"
+              >
                 <Link href="#pre-cadastro">
                   <Handshake className="size-5" />
                   Quero Patrocinar
