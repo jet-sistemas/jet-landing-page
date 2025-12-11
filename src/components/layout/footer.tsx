@@ -21,7 +21,7 @@ export function Footer() {
       className="relative overflow-hidden bg-primary text-primary-foreground"
     >
       {/* Decorative top border */}
-      <div className="h-1 bg-gradient-to-r from-secondary via-accent to-primary" />
+      <div className="h-1 bg-linear-to-r from-secondary via-accent to-primary" />
 
       {/* Main footer content */}
       <div className="container mx-auto px-4 py-16">

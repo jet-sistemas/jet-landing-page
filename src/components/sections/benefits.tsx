@@ -110,7 +110,7 @@ export function Benefits() {
 
           {/* Patrocinadores Card */}
           <Card className="relative overflow-hidden border-2 border-jet-gold/30 bg-card/80 backdrop-blur-sm">
-            <div className="absolute top-0 left-0 h-1 w-full bg-gradient-to-r from-jet-gold via-jet-silver to-jet-bronze" />
+            <div className="absolute top-0 left-0 h-1 w-full bg-linear-to-r from-jet-gold via-jet-silver to-jet-bronze" />
             <CardHeader className="pb-4">
               <div className="mb-2 flex items-center gap-2">
                 <Badge variant="gold">Ouro</Badge>
