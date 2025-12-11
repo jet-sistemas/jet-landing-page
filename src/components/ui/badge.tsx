@@ -10,7 +10,7 @@ const badgeVariants = cva(
     variants: {
       variant: {
         default:
-          "border-transparent bg-primary text-primary-foreground [a&]:hover:bg-primary/90",
+          "border-transparent bg-foreground text-background [a&]:hover:bg-primary/90",
         secondary:
           "border-transparent bg-secondary text-secondary-foreground [a&]:hover:bg-secondary/90",
         destructive:
@@ -20,6 +20,7 @@ const badgeVariants = cva(
         gold: "border-transparent bg-jet-gold text-jet-dark-blue",
         silver: "border-transparent bg-jet-silver text-jet-dark-blue",
         bronze: "border-transparent bg-jet-bronze text-white",
+        accent: "border-transparent bg-accent text-white",
       },
     },
     defaultVariants: {

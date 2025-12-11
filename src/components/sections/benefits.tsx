@@ -1,10 +1,11 @@
-import Link from "next/link";
 import { ArrowRight, Check } from "lucide-react";
+import Link from "next/link";
 
+import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
-import { associateBenefits, sponsorBenefits, membershipFee } from "@/lib/data";
+import { associateBenefits, membershipFee, sponsorBenefits } from "@/lib/data";
+import { cn } from "@/lib/utils";
 
 export function Benefits() {
   return (
@@ -22,9 +23,7 @@ export function Benefits() {
       <div className="container relative mx-auto px-4">
         {/* Section Header */}
         <div className="mx-auto max-w-3xl text-center">
-          <Badge variant="outline" className="mb-4">
-            Benefícios
-          </Badge>
+          <Badge className="mb-4">Benefícios</Badge>
           <h2 className="font-serif text-3xl font-bold tracking-tight text-foreground sm:text-4xl md:text-5xl">
             Por que se tornar um <span className="text-accent">parceiro</span>?
           </h2>
@@ -41,9 +40,7 @@ export function Benefits() {
             <div className="absolute top-0 left-0 h-1 w-full bg-gradient-to-r from-primary to-accent" />
             <CardHeader className="pb-4">
               <div className="mb-2 flex items-center justify-between">
-                <Badge className="bg-primary text-primary-foreground">
-                  Associado
-                </Badge>
+                <Badge variant={"accent"}>Associado</Badge>
                 <div className="text-right">
                   <span className="text-3xl font-bold text-foreground">
                     {membershipFee}
@@ -110,7 +107,13 @@ export function Benefits() {
 
           {/* Patrocinadores Card */}
           <Card className="relative overflow-hidden border-2 border-jet-gold/30 bg-card/80 backdrop-blur-sm">
-            <div className="absolute top-0 left-0 h-1 w-full bg-linear-to-r from-jet-gold via-jet-silver to-jet-bronze" />
+            <div
+              className={cn(
+                "absolute top-0 left-0 h-1 w-full",
+                "bg-linear-to-r from-jet-gold to-jet-bronze",
+                "dark:bg-linear-to-r dark:from-jet-gold dark:via-jet-silver dark:to-jet-bronze"
+              )}
+            />
             <CardHeader className="pb-4">
               <div className="mb-2 flex items-center gap-2">
                 <Badge variant="gold">Ouro</Badge>
@@ -180,8 +183,8 @@ export function Benefits() {
 
               <Button
                 asChild
-                variant="outline"
-                className="w-full border-jet-gold/50 hover:bg-jet-gold/10 group"
+                variant="secondary"
+                className="w-full group bg-linear-to-r from-secondary to-jet-gold"
                 size="lg"
               >
                 <Link href="#pre-cadastro">
