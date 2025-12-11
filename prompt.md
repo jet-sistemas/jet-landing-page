@@ -8,7 +8,6 @@ A Associação Desportiva, Artística e Cultural Joyce e Teatino (J & T) nasceu 
 Construir uma página frontend com SEO otimizado para apresentar a Associação, mostrar as formas de colaboração (como patrocinador ou associado) e servir como cartão de visita oficial da instituição.
 
 - **Sessão Hero**: deve ser chamativa e atraente, convidando o usuário a se tornar um parceiro (patrocinador ou associado).
-- **Banner/carrossel**: a sessão Hero deve conter, ou destacar em algum ponto, um banner com carrossel de imagens.
 - **Benefícios**: a página deve explicar com clareza todos os benefícios de se tornar parceiro, seja como patrocinador ou associado, com conteúdo otimizado para SEO visando pessoas que desejam conhecer a Associação.
 - **Pré-cadastro**: deve haver uma sessão de pré-cadastro para interessados em se tornarem parceiros.
 - **Patrocinadores**: deve existir um espaço dedicado para exibir os patrocinadores, que serão divulgados na landing page.
