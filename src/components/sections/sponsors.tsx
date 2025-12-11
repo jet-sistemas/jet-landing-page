@@ -14,14 +14,18 @@ const tierConfig: Record<
     color: string;
     bgColor: string;
     borderColor: string;
+    bgBadgeColor: string;
+    textBadgeColor: string;
   }
 > = {
   gold: {
     label: "Ouro",
     icon: Crown,
-    color: "text-jet-gold",
+    color: "text-yellow-900",
     bgColor: "bg-jet-gold/10",
     borderColor: "border-jet-gold/30",
+    bgBadgeColor: "bg-jet-gold",
+    textBadgeColor: "text-yellow-900",
   },
   silver: {
     label: "Prata",
@@ -29,6 +33,8 @@ const tierConfig: Record<
     color: "text-muted-foreground",
     bgColor: "bg-jet-silver/30",
     borderColor: "border-jet-silver/50",
+    bgBadgeColor: "bg-jet-silver",
+    textBadgeColor: "text-muted-foreground",
   },
   bronze: {
     label: "Bronze",
@@ -36,6 +42,8 @@ const tierConfig: Record<
     color: "text-jet-bronze",
     bgColor: "bg-jet-bronze/10",
     borderColor: "border-jet-bronze/30",
+    bgBadgeColor: "bg-jet-bronze",
+    textBadgeColor: "text-white",
   },
 };
 
@@ -55,10 +63,10 @@ function SponsorCard({ sponsor }: { sponsor: Sponsor }) {
       <div
         className={cn(
           "absolute -top-3 left-1/2 -translate-x-1/2 flex items-center gap-1 rounded-full px-3 py-1 text-xs font-medium",
-          tier.bgColor,
-          tier.color,
-          "border",
-          tier.borderColor
+          tier.bgBadgeColor,
+          tier.textBadgeColor
+          // "border",
+          // tier.borderColor
         )}
       >
         <TierIcon className="size-3" />
@@ -109,12 +117,16 @@ export function Sponsors() {
       <div className="container relative mx-auto px-4">
         {/* Section Header */}
         <div className="mx-auto max-w-3xl text-center">
-          <Badge variant="outline" className="mb-4">
-            Patrocinadores
-          </Badge>
+          <Badge className="mb-4">Patrocinadores</Badge>
           <h2 className="font-serif text-3xl font-bold tracking-tight text-foreground sm:text-4xl md:text-5xl">
             Nossos{" "}
-            <span className="bg-gradient-to-r from-jet-gold via-jet-silver to-jet-bronze bg-clip-text text-transparent">
+            <span
+              className={cn(
+                "bg-linear-to-r",
+                "from-jet-gold to-jet-bronze bg-clip-text text-transparent",
+                "dark:from-jet-gold dark:via-jet-silver dark:to-jet-bronze"
+              )}
+            >
               Parceiros
             </span>
           </h2>
@@ -132,7 +144,7 @@ export function Sponsors() {
               <div className="mb-6 flex items-center justify-center gap-2">
                 <Crown className="size-5 text-jet-gold" />
                 <h3 className="font-serif text-xl font-semibold text-jet-gold">
-                  Patrocinadores Ouro
+                  Tier Ouro
                 </h3>
               </div>
               <div className="flex flex-wrap items-center justify-center gap-6">
@@ -149,7 +161,7 @@ export function Sponsors() {
               <div className="mb-6 flex items-center justify-center gap-2">
                 <Medal className="size-5 text-muted-foreground" />
                 <h3 className="font-serif text-xl font-semibold text-muted-foreground">
-                  Patrocinadores Prata
+                  Tier Prata
                 </h3>
               </div>
               <div className="flex flex-wrap items-center justify-center gap-6">
@@ -166,7 +178,7 @@ export function Sponsors() {
               <div className="mb-6 flex items-center justify-center gap-2">
                 <Award className="size-5 text-jet-bronze" />
                 <h3 className="font-serif text-xl font-semibold text-jet-bronze">
-                  Patrocinadores Bronze
+                  Tier Bronze
                 </h3>
               </div>
               <div className="flex flex-wrap items-center justify-center gap-4">

@@ -109,9 +109,9 @@ export function Benefits() {
           <Card className="relative overflow-hidden border-2 border-jet-gold/30 bg-card/80 backdrop-blur-sm">
             <div
               className={cn(
-                "absolute top-0 left-0 h-1 w-full",
-                "bg-linear-to-r from-jet-gold to-jet-bronze",
-                "dark:bg-linear-to-r dark:from-jet-gold dark:via-jet-silver dark:to-jet-bronze"
+                "absolute top-0 left-0 h-1 w-full bg-linear-to-r",
+                "from-jet-gold to-jet-bronze",
+                "dark:from-jet-gold dark:via-jet-silver dark:to-jet-bronze"
               )}
             />
             <CardHeader className="pb-4">
