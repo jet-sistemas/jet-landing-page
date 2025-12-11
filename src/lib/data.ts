@@ -179,6 +179,36 @@ export const publications: Publication[] = [
     slug: "historia-sucesso-joao-pedro",
     category: "Histórias",
   },
+  {
+    id: "5",
+    title: "História de Sucesso: João Pedro",
+    excerpt:
+      "Conheça a trajetória de João Pedro, que descobriu o amor pelo vôlei através da nossa associação.",
+    coverImage: "/publications/historia.jpg",
+    publishedAt: "2025-05-28",
+    slug: "historia-sucesso-joao-pedro",
+    category: "Histórias",
+  },
+  {
+    id: "6",
+    title: "História de Sucesso: João Pedro",
+    excerpt:
+      "Conheça a trajetória de João Pedro, que descobriu o amor pelo vôlei através da nossa associação.",
+    coverImage: "/publications/historia.jpg",
+    publishedAt: "2025-05-28",
+    slug: "historia-sucesso-joao-pedro",
+    category: "Histórias",
+  },
+  {
+    id: "7",
+    title: "História de Sucesso: João Pedro",
+    excerpt:
+      "Conheça a trajetória de João Pedro, que descobriu o amor pelo vôlei através da nossa associação.",
+    coverImage: "/publications/historia.jpg",
+    publishedAt: "2025-05-28",
+    slug: "historia-sucesso-joao-pedro",
+    category: "Histórias",
+  },
 ];
 
 // Informações de contato

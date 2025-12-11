@@ -33,14 +33,18 @@ function PublicationCard({
     <Card
       className={cn(
         "group overflow-hidden border-border/50 bg-card/80 transition-all hover:border-accent/30 hover:shadow-lg",
-        featured && "lg:col-span-2 lg:row-span-2"
+        featured && "lg:col-span-2 lg:row-span-1 pt-0"
       )}
     >
+      {featured && (
+        <div className="h-1 w-full bg-linear-to-r from-primary to-accent" />
+      )}
+
       {/* Image placeholder */}
       <div
         className={cn(
           "relative overflow-hidden bg-muted",
-          featured ? "h-64 lg:h-80" : "h-48"
+          featured ? "h-64" : "h-48"
         )}
       >
         <div className="flex size-full items-center justify-center bg-gradient-to-br from-primary/20 to-accent/20">
@@ -48,12 +52,23 @@ function PublicationCard({
         </div>
 
         {/* Category badge */}
-        <Badge
-          variant="secondary"
-          className="absolute top-4 left-4 bg-background/90 backdrop-blur-sm"
-        >
-          {publication.category}
-        </Badge>
+        <div className="absolute top-4 left-4 flex gap-2">
+          <Badge
+            variant="secondary"
+            className="relative bg-background/90 backdrop-blur-sm"
+          >
+            {publication.category}
+          </Badge>
+
+          {featured && (
+            <Badge
+              variant="secondary"
+              className=" bg-green-500/90 text-white font-bold backdrop-blur-sm"
+            >
+              Novidade
+            </Badge>
+          )}
+        </div>
 
         {/* Overlay on hover */}
         <div className="absolute inset-0 bg-gradient-to-t from-background/80 via-transparent to-transparent opacity-0 transition-opacity group-hover:opacity-100" />
@@ -108,7 +123,7 @@ export function Publications() {
         {/* Section Header */}
         <div className="flex flex-col items-center justify-between gap-4 sm:flex-row">
           <div>
-            <Badge variant="outline" className="mb-4">
+            <Badge className="mb-4">
               <Newspaper className="mr-1 size-3" />
               Publicações
             </Badge>
@@ -129,7 +144,7 @@ export function Publications() {
         </div>
 
         {/* Publications Grid */}
-        <div className="mt-12 grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+        <div className="mt-12 grid gap-6 md:grid-cols-2 lg:grid-cols-4">
           {/* Featured publication */}
           <PublicationCard publication={featuredPublication} featured />
 

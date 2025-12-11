@@ -37,7 +37,7 @@ export function Benefits() {
         <div className="mt-16 grid gap-8 lg:grid-cols-2">
           {/* Associados Card */}
           <Card className="relative overflow-hidden border-2 border-primary/20 bg-card/80 backdrop-blur-sm">
-            <div className="absolute top-0 left-0 h-1 w-full bg-gradient-to-r from-primary to-accent" />
+            <div className="absolute top-0 left-0 h-1 w-full bg-linear-to-r from-primary to-accent" />
             <CardHeader className="pb-4">
               <div className="mb-2 flex items-center justify-between">
                 <Badge variant={"accent"}>Associado</Badge>
