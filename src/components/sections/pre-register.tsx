@@ -16,6 +16,7 @@ import { Label } from "@/components/ui/label";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Badge } from "@/components/ui/badge";
 import { contactInfo } from "@/lib/data";
+import { cn } from "@/lib/utils";
 
 export function PreRegister() {
   const [formData, setFormData] = React.useState({
@@ -100,9 +101,7 @@ export function PreRegister() {
       <div className="container relative mx-auto px-4">
         {/* Section Header */}
         <div className="mx-auto max-w-3xl text-center">
-          <Badge variant="outline" className="mb-4">
-            Pré-cadastro
-          </Badge>
+          <Badge className="mb-4">Pré-cadastro</Badge>
           <h2 className="font-serif text-3xl font-bold tracking-tight text-foreground sm:text-4xl md:text-5xl">
             Faça parte da <span className="text-accent">família J&T</span>
           </h2>
@@ -167,7 +166,15 @@ export function PreRegister() {
                           id="patrocinador"
                         />
                         <div>
-                          <span className="font-medium">Patrocinador</span>
+                          <span
+                            className={cn(
+                              "font-medium",
+                              formData.type === "patrocinador" &&
+                                "text-jet-gold"
+                            )}
+                          >
+                            Patrocinador
+                          </span>
                           <p className="text-xs text-muted-foreground">
                             Empresa parceira
                           </p>
@@ -232,7 +239,11 @@ export function PreRegister() {
 
                   <Button
                     type="submit"
-                    className="w-full"
+                    className={cn(
+                      "w-full",
+                      formData.type === "patrocinador" &&
+                        "bg-jet-gold text-foreground hover:bg-jet-gold/90"
+                    )}
                     size="lg"
                     disabled={isSubmitting}
                   >
