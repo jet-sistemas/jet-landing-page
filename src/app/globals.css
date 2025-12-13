@@ -281,4 +281,10 @@
     @apply dark:from-jet-gold dark:via-jet-silver dark:to-jet-bronze;
   }
 
+  .gradient-sponsors-text {
+    @apply bg-clip-text text-transparent;
+    @apply bg-linear-to-r;
+    @apply from-jet-gold to-jet-bronze;
+    @apply dark:from-jet-gold dark:via-jet-silver dark:to-jet-bronze;
+  }
 }
