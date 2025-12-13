@@ -269,4 +269,16 @@
     @apply transition-all duration-300 hover:font-extrabold;
     @apply hover:shadow-[0_0_30px_rgba(243,241,6,0.8)] dark:hover:shadow-[0_0_30px_rgba(242,181,68,0.8)];
   }
+
+  .gradient-membership {
+    @apply bg-linear-to-r;
+    @apply from-primary to-accent;
+  }
+
+  .gradient-sponsors {
+    @apply bg-linear-to-r;
+    @apply from-jet-gold to-jet-bronze;
+    @apply dark:from-jet-gold dark:via-jet-silver dark:to-jet-bronze;
+  }
+
 }

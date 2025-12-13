@@ -36,8 +36,8 @@ export function Benefits() {
         {/* Benefits Grid */}
         <div className="mt-16 grid gap-8 lg:grid-cols-2">
           {/* Associados Card */}
-          <Card className="relative overflow-hidden border-2 border-primary/20 bg-card/80 backdrop-blur-sm">
-            <div className="absolute top-0 left-0 h-1 w-full bg-linear-to-r from-primary to-accent" />
+          <Card className="relative overflow-hidden border-2 border-primary/20 dark:border-accent/20 bg-card/80 backdrop-blur-sm">
+            <div className="absolute top-0 left-0 h-1 w-full gradient-membership" />
             <CardHeader className="pb-4">
               <div className="mb-2 flex items-center justify-between">
                 <Badge variant={"accent"}>Associado</Badge>
@@ -60,7 +60,13 @@ export function Benefits() {
               <div className="space-y-4">
                 {associateBenefits.map((benefit) => (
                   <div key={benefit.title} className="flex gap-4">
-                    <div className="flex size-10 shrink-0 items-center justify-center rounded-lg bg-primary/10 text-primary">
+                    <div
+                      className={cn(
+                        "flex size-10 shrink-0 items-center justify-center rounded-lg",
+                        "bg-primary/10 text-primary",
+                        "dark:bg-foreground/10 dark:text-foreground"
+                      )}
+                    >
                       <benefit.icon className="size-5" />
                     </div>
                     <div>
@@ -96,7 +102,11 @@ export function Benefits() {
                 </ul>
               </div>
 
-              <Button asChild className="w-full group" size="lg">
+              <Button
+                asChild
+                className="w-full group gradient-membership text-white"
+                size="lg"
+              >
                 <Link href="#pre-cadastro">
                   Quero ser Associado
                   <ArrowRight className="size-4 transition-transform group-hover:translate-x-1" />
@@ -109,9 +119,7 @@ export function Benefits() {
           <Card className="relative overflow-hidden border-2 border-jet-gold/30 bg-card/80 backdrop-blur-sm">
             <div
               className={cn(
-                "absolute top-0 left-0 h-1 w-full bg-linear-to-r",
-                "from-jet-gold to-jet-bronze",
-                "dark:from-jet-gold dark:via-jet-silver dark:to-jet-bronze"
+                "absolute top-0 left-0 h-1 w-full gradient-sponsors"
               )}
             />
             <CardHeader className="pb-4">
