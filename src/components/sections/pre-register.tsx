@@ -147,7 +147,11 @@ export function PreRegister() {
                     >
                       <Label
                         htmlFor="associado"
-                        className="flex cursor-pointer items-center gap-3 rounded-lg border-2 border-border p-4 transition-colors hover:bg-muted/50 has-[:checked]:border-primary has-[:checked]:bg-primary/5"
+                        className={cn(
+                          "flex cursor-pointer items-center",
+                          "gap-3 rounded-lg border-2 border-border p-4",
+                          "transition-colors hover:bg-muted/50 has-checked:border-accent has-checked:bg-accent/5"
+                        )}
                       >
                         <RadioGroupItem value="associado" id="associado" />
                         <div>
@@ -242,7 +246,9 @@ export function PreRegister() {
                     className={cn(
                       "w-full",
                       formData.type === "patrocinador" &&
-                        "bg-jet-gold text-foreground hover:bg-jet-gold/90"
+                        "bg-jet-gold text-jet-dark-blue hover:bg-jet-gold/90",
+                      formData.type === "associado" &&
+                        "dark:bg-accent dark:text-foreground dark:hover:bg-accent/90"
                     )}
                     size="lg"
                     disabled={isSubmitting}
@@ -266,7 +272,7 @@ export function PreRegister() {
 
           {/* WhatsApp Contact Card */}
           <div className="flex flex-col gap-6">
-            <Card className="flex-1 border-2 border-green-500/20 bg-green-500/5">
+            <Card className="flex-1 border-2 border-green-500/20 bg-green-500/5 dark:bg-green-500/15">
               <CardHeader>
                 <CardTitle className="flex items-center gap-2 font-serif text-xl">
                   <MessageCircle className="size-5 text-green-500" />
