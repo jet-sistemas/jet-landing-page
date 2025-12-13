@@ -237,6 +237,27 @@
     @apply dark:from-secondary dark:via-accent dark:to-primary;
   }
 
+  .gradient-primary-text {
+    @apply bg-clip-text text-transparent;
+    @apply bg-linear-to-r;
+    @apply from-secondary via-jet-red to-primary;
+    @apply dark:from-secondary dark:to-jet-red;
+  }
+
+  .gradient-secondary-text {
+    @apply bg-clip-text text-transparent;
+    @apply bg-linear-to-r;
+    @apply from-primary to-jet-red;
+    @apply dark:from-jet-blue dark:to-accent;
+  }
+
+  .gradient-support-text {
+    @apply bg-clip-text text-transparent;
+    @apply bg-linear-to-r;
+    @apply from-primary to-jet-red;
+    @apply dark:from-white dark:to-accent;
+  }
+
   .gradient-gold-accent {
     @apply bg-linear-to-r;
     @apply from-secondary to-jet-gold dark:from-jet-gold dark:to-jet-bronze;
