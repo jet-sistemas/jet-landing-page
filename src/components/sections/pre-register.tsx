@@ -1,6 +1,6 @@
 "use client";
 
-import * as React from "react";
+import { Activity, useState } from "react";
 import { MessageCircle, Send, Phone, User, CreditCard } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
@@ -18,15 +18,24 @@ import { Badge } from "@/components/ui/badge";
 import { contactInfo } from "@/lib/data";
 import { cn } from "@/lib/utils";
 
+type PartnerType = "associado" | "patrocinador";
+
+type FormData = {
+  name: string;
+  cpf: string;
+  whatsapp: string;
+  type: PartnerType;
+};
+
 export function PreRegister() {
-  const [formData, setFormData] = React.useState({
+  const [formData, setFormData] = useState<FormData>({
     name: "",
     cpf: "",
     whatsapp: "",
     type: "associado",
   });
-  const [isSubmitting, setIsSubmitting] = React.useState(false);
-  const [isSubmitted, setIsSubmitted] = React.useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [isSubmitted, setIsSubmitted] = useState(false);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
@@ -34,7 +43,10 @@ export function PreRegister() {
   };
 
   const handleTypeChange = (value: string) => {
-    setFormData((prev) => ({ ...prev, type: value }));
+    setFormData((prev) => ({
+      ...prev,
+      type: value as PartnerType,
+    }));
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -188,7 +200,7 @@ export function PreRegister() {
                   </div>
 
                   {/* Name */}
-                  <div className="space-y-2">
+                  {/* <div className="space-y-2">
                     <Label htmlFor="name">Nome Completo</Label>
                     <div className="relative">
                       <User className="absolute left-3 top-1/2 size-4 -translate-y-1/2 text-muted-foreground" />
@@ -203,10 +215,10 @@ export function PreRegister() {
                         required
                       />
                     </div>
-                  </div>
+                  </div> */}
 
                   {/* CPF */}
-                  <div className="space-y-2">
+                  {/* <div className="space-y-2">
                     <Label htmlFor="cpf">CPF</Label>
                     <div className="relative">
                       <CreditCard className="absolute left-3 top-1/2 size-4 -translate-y-1/2 text-muted-foreground" />
@@ -221,10 +233,10 @@ export function PreRegister() {
                         required
                       />
                     </div>
-                  </div>
+                  </div> */}
 
                   {/* WhatsApp */}
-                  <div className="space-y-2">
+                  {/* <div className="space-y-2">
                     <Label htmlFor="whatsapp">WhatsApp</Label>
                     <div className="relative">
                       <Phone className="absolute left-3 top-1/2 size-4 -translate-y-1/2 text-muted-foreground" />
@@ -239,7 +251,36 @@ export function PreRegister() {
                         required
                       />
                     </div>
-                  </div>
+                  </div> */}
+
+                  <Activity
+                    mode={formData.type === "associado" ? "visible" : "hidden"}
+                  >
+                    <FormMembership
+                      formData={formData}
+                      handleChange={handleChange}
+                      handleCPFChange={handleCPFChange}
+                      handlePhoneChange={handlePhoneChange}
+                      isSubmitting={isSubmitting}
+                    />
+                  </Activity>
+
+                  <Activity
+                    mode={
+                      formData.type === "patrocinador" ? "visible" : "hidden"
+                    }
+                  >
+                    {/* @ts-expect-error */}
+                    <FormSponsor
+                    // formData={formData}
+                    // handleRepresentativeChange={handleRepresentativeChange}
+                    // handleCompanyChange={handleCompanyChange}
+                    // isSubmitting={isSubmitting}
+                    />
+                  </Activity>
+                  {/* {formData.type === "associado" && (
+                    
+                  )} */}
 
                   <Button
                     type="submit"
@@ -356,5 +397,225 @@ export function PreRegister() {
         </div>
       </div>
     </section>
+  );
+}
+
+type FormMembershipProps = {
+  formData: {
+    name: string;
+    cpf: string;
+    whatsapp: string;
+  };
+  handleChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
+  handleCPFChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
+  handlePhoneChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
+  isSubmitting: boolean;
+};
+
+function FormMembership({
+  formData,
+  handleChange,
+  handleCPFChange,
+  handlePhoneChange,
+  isSubmitting,
+}: FormMembershipProps) {
+  return (
+    <>
+      <div className="space-y-2">
+        <Label htmlFor="name">Nome Completo</Label>
+        <div className="relative">
+          <User className="absolute left-3 top-1/2 size-4 -translate-y-1/2 text-muted-foreground" />
+          <Input
+            id="name"
+            name="name"
+            type="text"
+            placeholder="Seu nome completo"
+            value={formData.name}
+            onChange={handleChange}
+            className="pl-10"
+            required
+          />
+        </div>
+      </div>
+
+      {/* CPF */}
+      <div className="space-y-2">
+        <Label htmlFor="cpf">CPF</Label>
+        <div className="relative">
+          <CreditCard className="absolute left-3 top-1/2 size-4 -translate-y-1/2 text-muted-foreground" />
+          <Input
+            id="cpf"
+            name="cpf"
+            type="text"
+            placeholder="000.000.000-00"
+            value={formData.cpf}
+            onChange={handleCPFChange}
+            className="pl-10"
+            required
+          />
+        </div>
+      </div>
+
+      {/* WhatsApp */}
+      <div className="space-y-2">
+        <Label htmlFor="whatsapp">WhatsApp</Label>
+        <div className="relative">
+          <Phone className="absolute left-3 top-1/2 size-4 -translate-y-1/2 text-muted-foreground" />
+          <Input
+            id="whatsapp"
+            name="whatsapp"
+            type="tel"
+            placeholder="(00) 0 0000-0000"
+            value={formData.whatsapp}
+            onChange={handlePhoneChange}
+            className="pl-10"
+            required
+          />
+        </div>
+      </div>
+
+      {/* <Button
+        type="submit"
+        className={cn(
+          "w-full",
+          // formData.type === "patrocinador" &&
+          //   "bg-jet-gold text-jet-dark-blue hover:bg-jet-gold/90",
+          // formData.type === "associado" &&
+          "dark:bg-accent dark:text-foreground dark:hover:bg-accent/90"
+        )}
+        size="lg"
+        disabled={isSubmitting}
+      >
+        {isSubmitting ? (
+          <>
+            <div className="size-4 animate-spin rounded-full border-2 border-current border-t-transparent" />
+            Enviando...
+          </>
+        ) : (
+          <>
+            <Send className="size-4" />
+            Enviar Pré-cadastro
+          </>
+        )}
+      </Button> */}
+    </>
+  );
+}
+
+type FormSponsorProps = {
+  formData: {
+    representative: {
+      name: string;
+      whatsapp: string;
+    };
+    company: {
+      cnpj: string;
+    };
+  };
+  handleRepresentativeChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
+  handleCompanyChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
+  isSubmitting: boolean;
+};
+
+function FormSponsor({}: // formData,
+// handleRepresentativeChange,
+// handleCompanyChange,
+// isSubmitting,
+FormSponsorProps) {
+  const formData = {
+    representative: {
+      name: "",
+      whatsapp: "",
+    },
+    company: {
+      cnpj: "",
+    },
+  };
+  const handleRepresentativeChange = (
+    e: React.ChangeEvent<HTMLInputElement>
+  ) => {
+    console.log(e.target.value);
+  };
+  const handleCompanyChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    console.log(e.target.value);
+  };
+  const isSubmitting = false;
+  return (
+    <>
+      <div className="space-y-2">
+        <Label htmlFor="name">Nome do Representante</Label>
+        <div className="relative">
+          <User className="absolute left-3 top-1/2 size-4 -translate-y-1/2 text-muted-foreground" />
+          <Input
+            id="name"
+            name="name"
+            type="text"
+            placeholder="Seu nome completo"
+            value={formData.representative.name}
+            onChange={handleRepresentativeChange}
+            className="pl-10"
+            required
+          />
+        </div>
+      </div>
+
+      {/* WhatsApp */}
+      <div className="space-y-2">
+        <Label htmlFor="whatsapp">WhatsApp</Label>
+        <div className="relative">
+          <Phone className="absolute left-3 top-1/2 size-4 -translate-y-1/2 text-muted-foreground" />
+          <Input
+            id="whatsapp"
+            name="whatsapp"
+            type="tel"
+            placeholder="(00) 0 0000-0000"
+            value={formData.representative.whatsapp}
+            onChange={handleRepresentativeChange}
+            className="pl-10"
+            required
+          />
+        </div>
+      </div>
+
+      {/* Company CNPJ */}
+      <div className="space-y-2">
+        <Label htmlFor="cnpj">CNPJ da Empresa</Label>
+        <div className="relative">
+          <CreditCard className="absolute left-3 top-1/2 size-4 -translate-y-1/2 text-muted-foreground" />
+          <Input
+            id="cnpj"
+            name="cnpj"
+            type="text"
+            placeholder="00.000.000/0000-00"
+            value={formData.company.cnpj}
+            onChange={handleCompanyChange}
+            className="pl-10"
+            required
+          />
+        </div>
+      </div>
+
+      {/* <Button
+        type="submit"
+        className={cn(
+          "w-full",
+          "bg-jet-gold text-jet-dark-blue hover:bg-jet-gold/90"
+        )}
+        size="lg"
+        disabled={isSubmitting}
+      >
+        {isSubmitting ? (
+          <>
+            <div className="size-4 animate-spin rounded-full border-2 border-current border-t-transparent" />
+            Enviando...
+          </>
+        ) : (
+          <>
+            <Send className="size-4" />
+            Enviar Pré-cadastro
+          </>
+        )}
+      </Button> */}
+    </>
   );
 }
