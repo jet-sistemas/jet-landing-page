@@ -32,6 +32,7 @@ function PublicationCard({
   return (
     <Card
       className={cn(
+        "hover:cursor-pointer",
         "group overflow-hidden border-border/50 bg-card/80 transition-all hover:border-accent/30 hover:shadow-lg",
         featured && "lg:col-span-2 lg:row-span-1 pt-0"
       )}
@@ -47,24 +48,18 @@ function PublicationCard({
           featured ? "h-64" : "h-48"
         )}
       >
-        <div className="flex size-full items-center justify-center bg-gradient-to-br from-primary/20 to-accent/20">
+        <div className="flex size-full items-center justify-center bg-linear-to-br from-primary/20 to-accent/20">
           <ImageIcon className="size-16 text-muted-foreground/50" />
         </div>
 
         {/* Category badge */}
         <div className="absolute top-4 left-4 flex gap-2">
-          <Badge
-            variant="secondary"
-            className="relative bg-background/90 backdrop-blur-sm"
-          >
+          <Badge variant="secondary" className="relative">
             {publication.category}
           </Badge>
 
           {featured && (
-            <Badge
-              variant="secondary"
-              className=" bg-green-500/90 text-white font-bold backdrop-blur-sm"
-            >
+            <Badge className=" bg-green-500/90 text-white font-bold backdrop-blur-sm">
               Novidade
             </Badge>
           )}
