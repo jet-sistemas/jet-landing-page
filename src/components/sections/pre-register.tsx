@@ -1,6 +1,14 @@
 "use client";
 
-import * as React from "react";
+import { Activity, useState } from "react";
+import { z } from "zod";
+import {
+  FormProvider,
+  SubmitHandler,
+  useForm,
+  useFormContext,
+} from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
 import { MessageCircle, Send, Phone, User, CreditCard } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
@@ -18,44 +26,127 @@ import { Badge } from "@/components/ui/badge";
 import { contactInfo } from "@/lib/data";
 import { cn } from "@/lib/utils";
 
+type PartnerType = "associado" | "patrocinador";
+
+const preRegisterSchemaObject = z.object({
+  type: z.enum(["associado", "patrocinador"], {
+    required_error: "Selecione um tipo de parceria",
+  }),
+  // Associado
+  name: z.string().max(120, "Nome muito longo").optional(),
+  cpf: z.string().max(14, "CPF inválido").optional(),
+  whatsapp: z.string().max(20, "WhatsApp inválido").optional(),
+  // Patrocinador
+  representativeName: z.string().max(120, "Nome muito longo").optional(),
+  representativeWhatsapp: z.string().max(20, "WhatsApp inválido").optional(),
+  companyCnpj: z.string().max(18, "CNPJ inválido").optional(),
+});
+
+type PreRegisterFormValues = z.infer<typeof preRegisterSchemaObject>;
+
+const preRegisterSchema = preRegisterSchemaObject.superRefine(
+  (data: PreRegisterFormValues, ctx: z.RefinementCtx) => {
+    if (data.type === "associado") {
+      if (!data.name) {
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          message: "Informe o nome completo",
+          path: ["name"],
+        });
+      }
+      if (!data.cpf) {
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          message: "Informe o CPF",
+          path: ["cpf"],
+        });
+      }
+      if (!data.whatsapp) {
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          message: "Informe o WhatsApp",
+          path: ["whatsapp"],
+        });
+      }
+      return;
+    }
+
+    if (data.type === "patrocinador") {
+      if (!data.representativeName) {
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          message: "Informe o nome do representante",
+          path: ["representativeName"],
+        });
+      }
+      if (!data.representativeWhatsapp) {
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          message: "Informe o WhatsApp do representante",
+          path: ["representativeWhatsapp"],
+        });
+      }
+      if (!data.companyCnpj) {
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          message: "Informe o CNPJ da empresa",
+          path: ["companyCnpj"],
+        });
+      }
+      return;
+    }
+  }
+);
+
+const REQUESTED_DATA_MEMBERSHIP = [
+  "Nome Completo",
+  "CPF",
+  "Número de Whatsapp (opcional)",
+];
+
+const REQUESTED_DATA_SPONSOR = [
+  "Nome do Representante",
+  "CNPJ da Empresa",
+  "Número de Whatsapp (opcional)",
+];
+
+function ListRequiredData({ type }: { type: "associado" | "patrocinador" }) {
+  return (
+    <>
+      {type === "associado" &&
+        REQUESTED_DATA_MEMBERSHIP.map((item) => <li key={item}>• {item}</li>)}
+      {type === "patrocinador" &&
+        REQUESTED_DATA_SPONSOR.map((item) => <li key={item}>• {item}</li>)}
+    </>
+  );
+}
+
 export function PreRegister() {
-  const [formData, setFormData] = React.useState({
-    name: "",
-    cpf: "",
-    whatsapp: "",
-    type: "associado",
+  const [isSubmitted, setIsSubmitted] = useState(false);
+
+  const formMethods = useForm<PreRegisterFormValues>({
+    defaultValues: {
+      type: "associado",
+      name: undefined,
+      cpf: undefined,
+      whatsapp: undefined,
+      representativeName: undefined,
+      representativeWhatsapp: undefined,
+      companyCnpj: undefined,
+    },
+    mode: "onSubmit",
+    resolver: zodResolver(preRegisterSchema),
   });
-  const [isSubmitting, setIsSubmitting] = React.useState(false);
-  const [isSubmitted, setIsSubmitted] = React.useState(false);
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const { name, value } = e.target;
-    setFormData((prev) => ({ ...prev, [name]: value }));
-  };
+  const {
+    handleSubmit,
+    watch,
+    setValue,
+    reset,
+    formState: { isSubmitting },
+  } = formMethods;
 
-  const handleTypeChange = (value: string) => {
-    setFormData((prev) => ({ ...prev, type: value }));
-  };
-
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setIsSubmitting(true);
-
-    // Simular envio
-    console.log("Dados do pré-cadastro:", formData);
-
-    // Simular delay de rede
-    await new Promise((resolve) => setTimeout(resolve, 1000));
-
-    setIsSubmitting(false);
-    setIsSubmitted(true);
-
-    // Reset form after showing success
-    setTimeout(() => {
-      setIsSubmitted(false);
-      setFormData({ name: "", cpf: "", whatsapp: "", type: "associado" });
-    }, 3000);
-  };
+  const partnerType = watch("type");
 
   const formatCPF = (value: string) => {
     const numbers = value.replace(/\D/g, "").slice(0, 11);
@@ -63,6 +154,15 @@ export function PreRegister() {
       .replace(/(\d{3})(\d)/, "$1.$2")
       .replace(/(\d{3})(\d)/, "$1.$2")
       .replace(/(\d{3})(\d{1,2})/, "$1-$2");
+  };
+
+  const formatCNPJ = (value: string) => {
+    const numbers = value.replace(/\D/g, "").slice(0, 14);
+    return numbers
+      .replace(/(\d{2})(\d)/, "$1.$2")
+      .replace(/(\d{3})(\d)/, "$1.$2")
+      .replace(/(\d{3})(\d)/, "$1/$2")
+      .replace(/(\d{4})(\d{1,2})/, "$1-$2");
   };
 
   const formatPhone = (value: string) => {
@@ -79,18 +179,51 @@ export function PreRegister() {
 
   const handleCPFChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const formatted = formatCPF(e.target.value);
-    setFormData((prev) => ({ ...prev, cpf: formatted }));
+    setValue("cpf", formatted);
+  };
+
+  const handleCNPJChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const formatted = formatCNPJ(e.target.value);
+    setValue("companyCnpj", formatted);
   };
 
   const handlePhoneChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const formatted = formatPhone(e.target.value);
-    setFormData((prev) => ({ ...prev, whatsapp: formatted }));
+
+    if (partnerType === "associado") {
+      setValue("whatsapp", formatted);
+    } else {
+      setValue("representativeWhatsapp", formatted);
+    }
+  };
+
+  const onSubmit: SubmitHandler<PreRegisterFormValues> = async (
+    data: PreRegisterFormValues
+  ) => {
+    alert(
+      `Pré-cadastro enviado com sucesso!\n\n${JSON.stringify(data, null, 2)}`
+    );
+    setIsSubmitted(true);
+
+    reset({
+      type: data.type,
+      name: "",
+      cpf: "",
+      whatsapp: "",
+      representativeName: "",
+      representativeWhatsapp: "",
+      companyCnpj: "",
+    });
+
+    setTimeout(() => {
+      setIsSubmitted(false);
+    }, 3000);
   };
 
   return (
     <section
       id="pre-cadastro"
-      className="relative overflow-hidden bg-gradient-to-b from-background to-muted/30 py-20 lg:py-32"
+      className="relative overflow-hidden bg-linear-to-b from-background to-muted/30 py-20 lg:py-32"
     >
       {/* Background decoration */}
       <div className="absolute inset-0 overflow-hidden">
@@ -136,136 +269,106 @@ export function PreRegister() {
                   </p>
                 </div>
               ) : (
-                <form onSubmit={handleSubmit} className="space-y-6">
-                  {/* Partner Type */}
-                  <div className="space-y-3">
-                    <Label>Tipo de Parceria</Label>
-                    <RadioGroup
-                      value={formData.type}
-                      onValueChange={handleTypeChange}
-                      className="grid grid-cols-2 gap-4"
+                <FormProvider {...formMethods}>
+                  <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
+                    {/* Tipo de Parceria */}
+                    <div className="space-y-3">
+                      <Label>Tipo de Parceria</Label>
+                      <RadioGroup
+                        value={partnerType}
+                        onValueChange={(value) =>
+                          setValue("type", value as PartnerType)
+                        }
+                        className="grid grid-cols-2 gap-4"
+                      >
+                        <Label
+                          htmlFor="associado"
+                          className={cn(
+                            "flex cursor-pointer items-center",
+                            "gap-3 rounded-lg border-2 border-border p-4",
+                            "transition-colors hover:bg-muted/50 has-checked:border-accent has-checked:bg-accent/5"
+                          )}
+                        >
+                          <RadioGroupItem value="associado" id="associado" />
+                          <div>
+                            <span className="font-medium">Associado</span>
+                            <p className="text-xs text-muted-foreground">
+                              Atleta ou entusiasta
+                            </p>
+                          </div>
+                        </Label>
+                        <Label
+                          htmlFor="patrocinador"
+                          className="flex cursor-pointer items-center gap-3 rounded-lg border-2 border-border p-4 transition-colors hover:bg-muted/50 has-checked:border-jet-gold has-checked:bg-jet-gold/5"
+                        >
+                          <RadioGroupItem
+                            value="patrocinador"
+                            id="patrocinador"
+                          />
+                          <div>
+                            <span
+                              className={cn(
+                                "font-medium",
+                                partnerType === "patrocinador" &&
+                                  "text-jet-gold"
+                              )}
+                            >
+                              Patrocinador
+                            </span>
+                            <p className="text-xs text-muted-foreground">
+                              Empresa parceira
+                            </p>
+                          </div>
+                        </Label>
+                      </RadioGroup>
+                    </div>
+
+                    <Activity
+                      mode={partnerType === "associado" ? "visible" : "hidden"}
                     >
-                      <Label
-                        htmlFor="associado"
-                        className={cn(
-                          "flex cursor-pointer items-center",
-                          "gap-3 rounded-lg border-2 border-border p-4",
-                          "transition-colors hover:bg-muted/50 has-checked:border-accent has-checked:bg-accent/5"
-                        )}
-                      >
-                        <RadioGroupItem value="associado" id="associado" />
-                        <div>
-                          <span className="font-medium">Associado</span>
-                          <p className="text-xs text-muted-foreground">
-                            Atleta ou entusiasta
-                          </p>
-                        </div>
-                      </Label>
-                      <Label
-                        htmlFor="patrocinador"
-                        className="flex cursor-pointer items-center gap-3 rounded-lg border-2 border-border p-4 transition-colors hover:bg-muted/50 has-[:checked]:border-jet-gold has-[:checked]:bg-jet-gold/5"
-                      >
-                        <RadioGroupItem
-                          value="patrocinador"
-                          id="patrocinador"
-                        />
-                        <div>
-                          <span
-                            className={cn(
-                              "font-medium",
-                              formData.type === "patrocinador" &&
-                                "text-jet-gold"
-                            )}
-                          >
-                            Patrocinador
-                          </span>
-                          <p className="text-xs text-muted-foreground">
-                            Empresa parceira
-                          </p>
-                        </div>
-                      </Label>
-                    </RadioGroup>
-                  </div>
-
-                  {/* Name */}
-                  <div className="space-y-2">
-                    <Label htmlFor="name">Nome Completo</Label>
-                    <div className="relative">
-                      <User className="absolute left-3 top-1/2 size-4 -translate-y-1/2 text-muted-foreground" />
-                      <Input
-                        id="name"
-                        name="name"
-                        type="text"
-                        placeholder="Seu nome completo"
-                        value={formData.name}
-                        onChange={handleChange}
-                        className="pl-10"
-                        required
+                      <FormMembership
+                        onCPFChange={handleCPFChange}
+                        onPhoneChange={handlePhoneChange}
                       />
-                    </div>
-                  </div>
+                    </Activity>
 
-                  {/* CPF */}
-                  <div className="space-y-2">
-                    <Label htmlFor="cpf">CPF</Label>
-                    <div className="relative">
-                      <CreditCard className="absolute left-3 top-1/2 size-4 -translate-y-1/2 text-muted-foreground" />
-                      <Input
-                        id="cpf"
-                        name="cpf"
-                        type="text"
-                        placeholder="000.000.000-00"
-                        value={formData.cpf}
-                        onChange={handleCPFChange}
-                        className="pl-10"
-                        required
+                    <Activity
+                      mode={
+                        partnerType === "patrocinador" ? "visible" : "hidden"
+                      }
+                    >
+                      <FormSponsor
+                        onCNPJChange={handleCNPJChange}
+                        onPhoneChange={handlePhoneChange}
                       />
-                    </div>
-                  </div>
+                    </Activity>
 
-                  {/* WhatsApp */}
-                  <div className="space-y-2">
-                    <Label htmlFor="whatsapp">WhatsApp</Label>
-                    <div className="relative">
-                      <Phone className="absolute left-3 top-1/2 size-4 -translate-y-1/2 text-muted-foreground" />
-                      <Input
-                        id="whatsapp"
-                        name="whatsapp"
-                        type="tel"
-                        placeholder="(00) 0 0000-0000"
-                        value={formData.whatsapp}
-                        onChange={handlePhoneChange}
-                        className="pl-10"
-                        required
-                      />
-                    </div>
-                  </div>
-
-                  <Button
-                    type="submit"
-                    className={cn(
-                      "w-full",
-                      formData.type === "patrocinador" &&
-                        "bg-jet-gold text-jet-dark-blue hover:bg-jet-gold/90",
-                      formData.type === "associado" &&
-                        "dark:bg-accent dark:text-foreground dark:hover:bg-accent/90"
-                    )}
-                    size="lg"
-                    disabled={isSubmitting}
-                  >
-                    {isSubmitting ? (
-                      <>
-                        <div className="size-4 animate-spin rounded-full border-2 border-current border-t-transparent" />
-                        Enviando...
-                      </>
-                    ) : (
-                      <>
-                        <Send className="size-4" />
-                        Enviar Pré-cadastro
-                      </>
-                    )}
-                  </Button>
-                </form>
+                    <Button
+                      type="submit"
+                      className={cn(
+                        "w-full",
+                        partnerType === "patrocinador" &&
+                          "bg-jet-gold text-jet-dark-blue hover:bg-jet-gold/90",
+                        partnerType === "associado" &&
+                          "dark:bg-accent dark:text-foreground dark:hover:bg-accent/90"
+                      )}
+                      size="lg"
+                      disabled={isSubmitting}
+                    >
+                      {isSubmitting ? (
+                        <>
+                          <div className="size-4 animate-spin rounded-full border-2 border-current border-t-transparent" />
+                          Enviando...
+                        </>
+                      ) : (
+                        <>
+                          <Send className="size-4" />
+                          Enviar Pré-cadastro
+                        </>
+                      )}
+                    </Button>
+                  </form>
+                </FormProvider>
               )}
             </CardContent>
           </Card>
@@ -289,9 +392,7 @@ export function PreRegister() {
                     Envie uma mensagem com seus dados:
                   </p>
                   <ul className="mt-2 space-y-1 text-sm">
-                    <li>• Nome completo</li>
-                    <li>• CPF</li>
-                    <li>• Número de WhatsApp</li>
+                    <ListRequiredData type={partnerType} />
                   </ul>
                 </div>
 
@@ -356,5 +457,148 @@ export function PreRegister() {
         </div>
       </div>
     </section>
+  );
+}
+
+type FormMembershipProps = {
+  onCPFChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
+  onPhoneChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
+};
+
+function FormMembership({ onCPFChange, onPhoneChange }: FormMembershipProps) {
+  const {
+    register,
+    formState: { errors },
+  } = useFormContext<PreRegisterFormValues>();
+
+  return (
+    <>
+      <div className="space-y-2">
+        <Label htmlFor="name">Nome Completo</Label>
+        <div className="relative">
+          <User className="absolute left-3 top-1/2 size-4 -translate-y-1/2 text-muted-foreground" />
+          <Input
+            {...register("name")}
+            type="text"
+            placeholder="Seu nome completo"
+            className="pl-10"
+          />
+        </div>
+        {errors.name && (
+          <p className="text-xs text-destructive">{errors.name.message}</p>
+        )}
+      </div>
+
+      {/* CPF */}
+      <div className="space-y-2">
+        <Label htmlFor="cpf">CPF</Label>
+        <div className="relative">
+          <CreditCard className="absolute left-3 top-1/2 size-4 -translate-y-1/2 text-muted-foreground" />
+          <Input
+            {...register("cpf")}
+            type="text"
+            placeholder="000.000.000-00"
+            onChange={onCPFChange}
+            className="pl-10"
+          />
+        </div>
+        {errors.cpf && (
+          <p className="text-xs text-destructive">{errors.cpf.message}</p>
+        )}
+      </div>
+
+      {/* WhatsApp */}
+      <div className="space-y-2">
+        <Label htmlFor="whatsapp">WhatsApp</Label>
+        <div className="relative">
+          <Phone className="absolute left-3 top-1/2 size-4 -translate-y-1/2 text-muted-foreground" />
+          <Input
+            {...register("whatsapp")}
+            type="tel"
+            placeholder="(00) 0 0000-0000"
+            onChange={onPhoneChange}
+            className="pl-10"
+          />
+        </div>
+        {errors.whatsapp && (
+          <p className="text-xs text-destructive">{errors.whatsapp.message}</p>
+        )}
+      </div>
+    </>
+  );
+}
+
+type FormSponsorProps = {
+  onCNPJChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
+  onPhoneChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
+};
+
+function FormSponsor({ onCNPJChange, onPhoneChange }: FormSponsorProps) {
+  const {
+    register,
+    formState: { errors },
+  } = useFormContext<PreRegisterFormValues>();
+
+  return (
+    <>
+      <div className="space-y-2">
+        <Label htmlFor="name">Nome do Representante</Label>
+        <div className="relative">
+          <User className="absolute left-3 top-1/2 size-4 -translate-y-1/2 text-muted-foreground" />
+          <Input
+            {...register("representativeName")}
+            type="text"
+            placeholder="Seu nome completo"
+            className="pl-10"
+          />
+        </div>
+        {errors.representativeName && (
+          <p className="text-xs text-destructive">
+            {errors.representativeName.message}
+          </p>
+        )}
+      </div>
+
+      {/* WhatsApp */}
+      <div className="space-y-2">
+        <Label htmlFor="whatsapp">WhatsApp</Label>
+        <div className="relative">
+          <Phone className="absolute left-3 top-1/2 size-4 -translate-y-1/2 text-muted-foreground" />
+          <Input
+            {...register("representativeWhatsapp")}
+            type="tel"
+            placeholder="(00) 0 0000-0000"
+            onChange={onPhoneChange}
+            className="pl-10"
+          />
+        </div>
+        {errors.representativeWhatsapp && (
+          <p className="text-xs text-destructive">
+            {errors.representativeWhatsapp.message}
+          </p>
+        )}
+      </div>
+
+      {/* Company CNPJ */}
+      <div className="space-y-2">
+        <Label htmlFor="cnpj">CNPJ da Empresa</Label>
+        <div className="relative">
+          <CreditCard className="absolute left-3 top-1/2 size-4 -translate-y-1/2 text-muted-foreground" />
+          <Input
+            {...register("companyCnpj")}
+            type="text"
+            placeholder="00.000.000/0000-00"
+            className="pl-10"
+            onChange={onCNPJChange}
+            maxLength={18}
+          />
+        </div>
+        {errors.companyCnpj && (
+          <p className="text-xs text-destructive">
+            {errors.companyCnpj.message}
+          </p>
+        )}
+      </div>
+    </>
   );
 }

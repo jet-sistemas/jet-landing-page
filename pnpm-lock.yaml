@@ -8,6 +8,9 @@ importers:
 
   .:
     dependencies:
+      '@hookform/resolvers':
+        specifier: ^3.10.0
+        version: 3.10.0(react-hook-form@7.68.0(react@19.2.1))
       '@radix-ui/react-dialog':
         specifier: ^1.1.15
         version: 1.1.15(@types/react-dom@19.2.3(@types/react@19.2.7))(@types/react@19.2.7)(react-dom@19.2.1(react@19.2.1))(react@19.2.1)
@@ -47,12 +50,18 @@ importers:
       react-dom:
         specifier: 19.2.1
         version: 19.2.1(react@19.2.1)
+      react-hook-form:
+        specifier: ^7.68.0
+        version: 7.68.0(react@19.2.1)
       tailwind-merge:
         specifier: ^3.4.0
         version: 3.4.0
       tw-animate-css:
         specifier: ^1.4.0
         version: 1.4.0
+      zod:
+        specifier: ^3.25.76
+        version: 3.25.76
     devDependencies:
       '@tailwindcss/postcss':
         specifier: ^4
@@ -213,6 +222,11 @@ packages:
 
   '@floating-ui/utils@0.2.10':
     resolution: {integrity: sha512-aGTxbpbg8/b5JfU1HXSrbH3wXZuLPJcNEcZQFMxLs3oSzgtVu6nFPkbbGGUvBcUjKV2YyB9Wxxabo+HEH9tcRQ==}
+
+  '@hookform/resolvers@3.10.0':
+    resolution: {integrity: sha512-79Dv+3mDF7i+2ajj7SkypSKHhl1cbln1OGavqrsF7p6mbUv11xpqpacPsGDCTRvCSjEEIez2ef1NveSVL3b0Ag==}
+    peerDependencies:
+      react-hook-form: ^7.0.0
 
   '@humanfs/core@0.19.1':
     resolution: {integrity: sha512-5DyQ4+1JEUzejeK1JGICcideyfUbGixgS9jNgex5nqkW+cY7WZhxBigmieN5Qnw9ZosSNVC9KQKyb+GUaGyKUA==}
@@ -2052,6 +2066,12 @@ packages:
     peerDependencies:
       react: ^19.2.1
 
+  react-hook-form@7.68.0:
+    resolution: {integrity: sha512-oNN3fjrZ/Xo40SWlHf1yCjlMK417JxoSJVUXQjGdvdRCU07NTFei1i1f8ApUAts+IVh14e4EdakeLEA+BEAs/Q==}
+    engines: {node: '>=18.0.0'}
+    peerDependencies:
+      react: ^16.8.0 || ^17 || ^18 || ^19
+
   react-is@16.13.1:
     resolution: {integrity: sha512-24e6ynE2H+OKt4kqsOvNd8kBpV65zoxbA4BVsEOB3ARVWQki/DHzaUoC5KuON/BiccDaCCTZBuOcfZs70kR8bQ==}
 
@@ -2389,8 +2409,8 @@ packages:
     peerDependencies:
       zod: ^3.25.0 || ^4.0.0
 
-  zod@4.1.13:
-    resolution: {integrity: sha512-AvvthqfqrAhNH9dnfmrfKzX5upOdjUVJYFqNSlkmGf64gRaTzlPwz99IHYnVs28qYAybvAlBV+H7pn0saFY4Ig==}
+  zod@3.25.76:
+    resolution: {integrity: sha512-gzUt/qt81nXsFGKIFcC3YnfEAx5NkunCfnDlvuBSSFS02bcXu4Lmea0AFIUwbLWxWPx3d9p8S5QoaujKcNQxcQ==}
 
 snapshots:
 
@@ -2574,6 +2594,10 @@ snapshots:
       react-dom: 19.2.1(react@19.2.1)
 
   '@floating-ui/utils@0.2.10': {}
+
+  '@hookform/resolvers@3.10.0(react-hook-form@7.68.0(react@19.2.1))':
+    dependencies:
+      react-hook-form: 7.68.0(react@19.2.1)
 
   '@humanfs/core@0.19.1': {}
 
@@ -3790,8 +3814,8 @@ snapshots:
       '@babel/parser': 7.28.5
       eslint: 9.39.1(jiti@2.6.1)
       hermes-parser: 0.25.1
-      zod: 4.1.13
-      zod-validation-error: 4.0.2(zod@4.1.13)
+      zod: 3.25.76
+      zod-validation-error: 4.0.2(zod@3.25.76)
     transitivePeerDependencies:
       - supports-color
 
@@ -4453,6 +4477,10 @@ snapshots:
       react: 19.2.1
       scheduler: 0.27.0
 
+  react-hook-form@7.68.0(react@19.2.1):
+    dependencies:
+      react: 19.2.1
+
   react-is@16.13.1: {}
 
   react-remove-scroll-bar@2.3.8(@types/react@19.2.7)(react@19.2.1):
@@ -4904,8 +4932,8 @@ snapshots:
 
   yocto-queue@0.1.0: {}
 
-  zod-validation-error@4.0.2(zod@4.1.13):
+  zod-validation-error@4.0.2(zod@3.25.76):
     dependencies:
-      zod: 4.1.13
+      zod: 3.25.76
 
-  zod@4.1.13: {}
+  zod@3.25.76: {}
