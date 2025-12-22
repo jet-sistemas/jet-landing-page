@@ -1,16 +1,16 @@
 "use client";
 
+import { zodResolver } from "@hookform/resolvers/zod";
+import { CreditCard, MessageCircle, Phone, Send, User } from "lucide-react";
 import { Activity, useState } from "react";
-import { z } from "zod";
 import {
   FormProvider,
   SubmitHandler,
   useForm,
   useFormContext,
 } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { MessageCircle, Send, Phone, User, CreditCard } from "lucide-react";
 
+import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -22,81 +22,13 @@ import {
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
-import { Badge } from "@/components/ui/badge";
 import { contactInfo } from "@/lib/data";
-import { cn } from "@/lib/utils";
-
-type PartnerType = "associado" | "patrocinador";
-
-const preRegisterSchemaObject = z.object({
-  type: z.enum(["associado", "patrocinador"], {
-    required_error: "Selecione um tipo de parceria",
-  }),
-  // Associado
-  name: z.string().max(120, "Nome muito longo").optional(),
-  cpf: z.string().max(14, "CPF inválido").optional(),
-  whatsapp: z.string().max(20, "WhatsApp inválido").optional(),
-  // Patrocinador
-  representativeName: z.string().max(120, "Nome muito longo").optional(),
-  representativeWhatsapp: z.string().max(20, "WhatsApp inválido").optional(),
-  companyCnpj: z.string().max(18, "CNPJ inválido").optional(),
-});
-
-type PreRegisterFormValues = z.infer<typeof preRegisterSchemaObject>;
-
-const preRegisterSchema = preRegisterSchemaObject.superRefine(
-  (data: PreRegisterFormValues, ctx: z.RefinementCtx) => {
-    if (data.type === "associado") {
-      if (!data.name) {
-        ctx.addIssue({
-          code: z.ZodIssueCode.custom,
-          message: "Informe o nome completo",
-          path: ["name"],
-        });
-      }
-      if (!data.cpf) {
-        ctx.addIssue({
-          code: z.ZodIssueCode.custom,
-          message: "Informe o CPF",
-          path: ["cpf"],
-        });
-      }
-      if (!data.whatsapp) {
-        ctx.addIssue({
-          code: z.ZodIssueCode.custom,
-          message: "Informe o WhatsApp",
-          path: ["whatsapp"],
-        });
-      }
-      return;
-    }
-
-    if (data.type === "patrocinador") {
-      if (!data.representativeName) {
-        ctx.addIssue({
-          code: z.ZodIssueCode.custom,
-          message: "Informe o nome do representante",
-          path: ["representativeName"],
-        });
-      }
-      if (!data.representativeWhatsapp) {
-        ctx.addIssue({
-          code: z.ZodIssueCode.custom,
-          message: "Informe o WhatsApp do representante",
-          path: ["representativeWhatsapp"],
-        });
-      }
-      if (!data.companyCnpj) {
-        ctx.addIssue({
-          code: z.ZodIssueCode.custom,
-          message: "Informe o CNPJ da empresa",
-          path: ["companyCnpj"],
-        });
-      }
-      return;
-    }
-  }
-);
+import { cn, formatCNPJ, formatCPF, formatPhone } from "@/lib/utils";
+import {
+  PartnerType,
+  PRE_REGISTER_SCHEMA_REFINED,
+  PreRegisterForm,
+} from "@/types/validations/PreRegisterForm";
 
 const REQUESTED_DATA_MEMBERSHIP = [
   "Nome Completo",
@@ -124,7 +56,7 @@ function ListRequiredData({ type }: { type: "associado" | "patrocinador" }) {
 export function PreRegister() {
   const [isSubmitted, setIsSubmitted] = useState(false);
 
-  const formMethods = useForm<PreRegisterFormValues>({
+  const formMethods = useForm<PreRegisterForm>({
     defaultValues: {
       type: "associado",
       name: undefined,
@@ -135,7 +67,7 @@ export function PreRegister() {
       companyCnpj: undefined,
     },
     mode: "onSubmit",
-    resolver: zodResolver(preRegisterSchema),
+    resolver: zodResolver(PRE_REGISTER_SCHEMA_REFINED),
   });
 
   const {
@@ -147,35 +79,6 @@ export function PreRegister() {
   } = formMethods;
 
   const partnerType = watch("type");
-
-  const formatCPF = (value: string) => {
-    const numbers = value.replace(/\D/g, "").slice(0, 11);
-    return numbers
-      .replace(/(\d{3})(\d)/, "$1.$2")
-      .replace(/(\d{3})(\d)/, "$1.$2")
-      .replace(/(\d{3})(\d{1,2})/, "$1-$2");
-  };
-
-  const formatCNPJ = (value: string) => {
-    const numbers = value.replace(/\D/g, "").slice(0, 14);
-    return numbers
-      .replace(/(\d{2})(\d)/, "$1.$2")
-      .replace(/(\d{3})(\d)/, "$1.$2")
-      .replace(/(\d{3})(\d)/, "$1/$2")
-      .replace(/(\d{4})(\d{1,2})/, "$1-$2");
-  };
-
-  const formatPhone = (value: string) => {
-    const numbers = value.replace(/\D/g, "").slice(0, 11);
-    if (numbers.length <= 10) {
-      return numbers
-        .replace(/(\d{2})(\d)/, "($1) $2")
-        .replace(/(\d{4})(\d)/, "$1-$2");
-    }
-    return numbers
-      .replace(/(\d{2})(\d)/, "($1) $2")
-      .replace(/(\d{5})(\d)/, "$1-$2");
-  };
 
   const handleCPFChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const formatted = formatCPF(e.target.value);
@@ -197,27 +100,42 @@ export function PreRegister() {
     }
   };
 
-  const onSubmit: SubmitHandler<PreRegisterFormValues> = async (
-    data: PreRegisterFormValues
+  const onSubmit: SubmitHandler<PreRegisterForm> = async (
+    data: PreRegisterForm
   ) => {
-    alert(
-      `Pré-cadastro enviado com sucesso!\n\n${JSON.stringify(data, null, 2)}`
-    );
-    setIsSubmitted(true);
+    try {
+      const response = await fetch("/api/pre-register", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(data),
+      });
 
-    reset({
-      type: data.type,
-      name: "",
-      cpf: "",
-      whatsapp: "",
-      representativeName: "",
-      representativeWhatsapp: "",
-      companyCnpj: "",
-    });
+      const result = await response.json();
 
-    setTimeout(() => {
-      setIsSubmitted(false);
-    }, 3000);
+      if (!response.ok) {
+        throw new Error(result.message || "Erro ao enviar pré-cadastro");
+      }
+
+      setIsSubmitted(true);
+      reset({
+        type: data.type,
+        name: "",
+        cpf: "",
+        whatsapp: "",
+        representativeName: "",
+        representativeWhatsapp: "",
+        companyCnpj: "",
+      });
+
+      setTimeout(() => {
+        setIsSubmitted(false);
+      }, 3000);
+    } catch (error) {
+      console.error("Erro:", error);
+      alert("Erro ao enviar pré-cadastro. Por favor, tente novamente.");
+    }
   };
 
   return (
@@ -469,7 +387,7 @@ function FormMembership({ onCPFChange, onPhoneChange }: FormMembershipProps) {
   const {
     register,
     formState: { errors },
-  } = useFormContext<PreRegisterFormValues>();
+  } = useFormContext<PreRegisterForm>();
 
   return (
     <>
@@ -537,7 +455,7 @@ function FormSponsor({ onCNPJChange, onPhoneChange }: FormSponsorProps) {
   const {
     register,
     formState: { errors },
-  } = useFormContext<PreRegisterFormValues>();
+  } = useFormContext<PreRegisterForm>();
 
   return (
     <>
