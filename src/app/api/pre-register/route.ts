@@ -3,7 +3,7 @@ import { google } from "googleapis";
 import { NextRequest, NextResponse } from "next/server";
 
 const SPREADSHEET_ID = process.env.GOOGLE_SHEET_ID;
-const RANGE = "primeiros-leads";
+const RANGE = process.env.GOOGLE_SHEET_RANGE;
 
 async function getGoogleSheetsClient() {
   const auth = new google.auth.GoogleAuth({
