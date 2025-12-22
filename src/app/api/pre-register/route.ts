@@ -22,6 +22,61 @@ function recoverData(type: PartnerType, first: string, second: string) {
   return second;
 }
 
+async function checkDuplicate(
+  identifier: string,
+  whatsapp: string
+): Promise<{ exists: boolean; message?: string }> {
+  try {
+    const sheets = await getGoogleSheetsClient();
+
+    // Buscar apenas as colunas D (índice 3) e E (índice 4) - muito mais eficiente
+    const response = await sheets.spreadsheets.values.get({
+      spreadsheetId: SPREADSHEET_ID,
+      range: `${RANGE}!D:E`, // Apenas colunas D e E
+    });
+
+    const rows = response.data.values || [];
+
+    // Pular o cabeçalho (primeira linha) se existir
+    const dataRows = rows.slice(1);
+
+    // Normalizar os valores para comparação (remover formatação)
+    const normalizeValue = (value: string) => {
+      return value?.replace(/\D/g, "") || ""; // Remove tudo que não é dígito
+    };
+
+    const normalizedIdentifier = normalizeValue(identifier);
+    const normalizedWhatsapp = normalizeValue(whatsapp);
+
+    // Verificar duplicatas
+    for (const row of dataRows) {
+      // row[0] = coluna D (CPF/CNPJ), row[1] = coluna E (WhatsApp)
+      const existingIdentifier = row[0] ? normalizeValue(row[0]) : "";
+      const existingWhatsapp = row[1] ? normalizeValue(row[1]) : "";
+
+      if (normalizedIdentifier && existingIdentifier === normalizedIdentifier) {
+        return {
+          exists: true,
+          message: "Já existe um cadastro com este CPF/CNPJ.",
+        };
+      }
+
+      if (normalizedWhatsapp && existingWhatsapp === normalizedWhatsapp) {
+        return {
+          exists: true,
+          message: "Já existe um cadastro com este WhatsApp.",
+        };
+      }
+    }
+
+    return { exists: false };
+  } catch (error) {
+    console.error("Erro ao verificar duplicatas:", error);
+    // Em caso de erro na verificação, permitir o cadastro
+    return { exists: false };
+  }
+}
+
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json();
@@ -44,6 +99,18 @@ export async function POST(request: NextRequest) {
       identifier: recoverData(type, cpf, companyCnpj),
       whatsapp: recoverData(type, whatsapp, representativeWhatsapp),
     };
+
+    const duplicateCheck = await checkDuplicate(data.identifier, data.whatsapp);
+
+    if (duplicateCheck.exists) {
+      return NextResponse.json(
+        {
+          success: true,
+          message: "Cadastrado com sucesso!",
+        },
+        { status: 200 }
+      );
+    }
 
     const values = [
       [data.date, data.type, data.name, data.identifier, data.whatsapp],
