@@ -83,9 +83,11 @@ export function Hero() {
               <div className="h-12 w-px bg-border" />
               <div className="flex flex-col items-center lg:items-start">
                 <span className="font-serif text-3xl font-bold text-foreground">
-                  R$ 20
+                  Gratuito
                 </span>
-                <span className="text-sm text-muted-foreground">/mês</span>
+                <span className="text-sm text-muted-foreground">
+                  aproveite e venha conhecer o projeto!
+                </span>
               </div>
             </div>
           </div>
