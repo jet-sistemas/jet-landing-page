@@ -139,83 +139,83 @@ export interface Publication {
 }
 
 export const publications: Publication[] = [
-  {
-    id: "1",
-    title: "Campeonato Regional de Vôlei 2025",
-    excerpt:
-      "A Associação J&T está organizando o maior campeonato regional de vôlei do sul do Piauí. Inscrições abertas!",
-    coverImage: "/publications/campeonato.jpg",
-    publishedAt: "2025-06-15",
-    slug: "campeonato-regional-volei-2025",
-    category: "Eventos",
-  },
-  {
-    id: "2",
-    title: "Novos Parceiros se Juntam à Família J&T",
-    excerpt:
-      "Celebramos a chegada de três novos patrocinadores que acreditam no poder transformador do esporte.",
-    coverImage: "/publications/parceiros.jpg",
-    publishedAt: "2025-06-10",
-    slug: "novos-parceiros-familia-jt",
-    category: "Parcerias",
-  },
-  {
-    id: "3",
-    title: "Treinos de Verão: Vagas Limitadas",
-    excerpt:
-      "Os treinos intensivos de verão começam em julho. Garanta sua vaga e desenvolva suas habilidades.",
-    coverImage: "/publications/treinos.jpg",
-    publishedAt: "2025-06-05",
-    slug: "treinos-verao-vagas-limitadas",
-    category: "Treinos",
-  },
-  {
-    id: "4",
-    title: "História de Sucesso: João Pedro",
-    excerpt:
-      "Conheça a trajetória de João Pedro, que descobriu o amor pelo vôlei através da nossa associação.",
-    coverImage: "/publications/historia.jpg",
-    publishedAt: "2025-05-28",
-    slug: "historia-sucesso-joao-pedro",
-    category: "Histórias",
-  },
-  {
-    id: "5",
-    title: "História de Sucesso: João Pedro",
-    excerpt:
-      "Conheça a trajetória de João Pedro, que descobriu o amor pelo vôlei através da nossa associação.",
-    coverImage: "/publications/historia.jpg",
-    publishedAt: "2025-05-28",
-    slug: "historia-sucesso-joao-pedro",
-    category: "Histórias",
-  },
-  {
-    id: "6",
-    title: "História de Sucesso: João Pedro",
-    excerpt:
-      "Conheça a trajetória de João Pedro, que descobriu o amor pelo vôlei através da nossa associação.",
-    coverImage: "/publications/historia.jpg",
-    publishedAt: "2025-05-28",
-    slug: "historia-sucesso-joao-pedro",
-    category: "Histórias",
-  },
-  {
-    id: "7",
-    title: "História de Sucesso: João Pedro",
-    excerpt:
-      "Conheça a trajetória de João Pedro, que descobriu o amor pelo vôlei através da nossa associação.",
-    coverImage: "/publications/historia.jpg",
-    publishedAt: "2025-05-28",
-    slug: "historia-sucesso-joao-pedro",
-    category: "Histórias",
-  },
+  // {
+  //   id: "1",
+  //   title: "Campeonato Regional de Vôlei 2025",
+  //   excerpt:
+  //     "A Associação J&T está organizando o maior campeonato regional de vôlei do sul do Piauí. Inscrições abertas!",
+  //   coverImage: "/publications/campeonato.jpg",
+  //   publishedAt: "2025-06-15",
+  //   slug: "campeonato-regional-volei-2025",
+  //   category: "Eventos",
+  // },
+  // {
+  //   id: "2",
+  //   title: "Novos Parceiros se Juntam à Família J&T",
+  //   excerpt:
+  //     "Celebramos a chegada de três novos patrocinadores que acreditam no poder transformador do esporte.",
+  //   coverImage: "/publications/parceiros.jpg",
+  //   publishedAt: "2025-06-10",
+  //   slug: "novos-parceiros-familia-jt",
+  //   category: "Parcerias",
+  // },
+  // {
+  //   id: "3",
+  //   title: "Treinos de Verão: Vagas Limitadas",
+  //   excerpt:
+  //     "Os treinos intensivos de verão começam em julho. Garanta sua vaga e desenvolva suas habilidades.",
+  //   coverImage: "/publications/treinos.jpg",
+  //   publishedAt: "2025-06-05",
+  //   slug: "treinos-verao-vagas-limitadas",
+  //   category: "Treinos",
+  // },
+  // {
+  //   id: "4",
+  //   title: "História de Sucesso: João Pedro",
+  //   excerpt:
+  //     "Conheça a trajetória de João Pedro, que descobriu o amor pelo vôlei através da nossa associação.",
+  //   coverImage: "/publications/historia.jpg",
+  //   publishedAt: "2025-05-28",
+  //   slug: "historia-sucesso-joao-pedro",
+  //   category: "Histórias",
+  // },
+  // {
+  //   id: "5",
+  //   title: "História de Sucesso: João Pedro",
+  //   excerpt:
+  //     "Conheça a trajetória de João Pedro, que descobriu o amor pelo vôlei através da nossa associação.",
+  //   coverImage: "/publications/historia.jpg",
+  //   publishedAt: "2025-05-28",
+  //   slug: "historia-sucesso-joao-pedro",
+  //   category: "Histórias",
+  // },
+  // {
+  //   id: "6",
+  //   title: "História de Sucesso: João Pedro",
+  //   excerpt:
+  //     "Conheça a trajetória de João Pedro, que descobriu o amor pelo vôlei através da nossa associação.",
+  //   coverImage: "/publications/historia.jpg",
+  //   publishedAt: "2025-05-28",
+  //   slug: "historia-sucesso-joao-pedro",
+  //   category: "Histórias",
+  // },
+  // {
+  //   id: "7",
+  //   title: "História de Sucesso: João Pedro",
+  //   excerpt:
+  //     "Conheça a trajetória de João Pedro, que descobriu o amor pelo vôlei através da nossa associação.",
+  //   coverImage: "/publications/historia.jpg",
+  //   publishedAt: "2025-05-28",
+  //   slug: "historia-sucesso-joao-pedro",
+  //   category: "Histórias",
+  // },
 ];
 
 // Informações de contato
 export const contactInfo = {
   whatsapp: "(89) 9 9465-9400",
   whatsappLink: "https://wa.me/5589994659400",
-  email: "contato@jetassociacao.com.br",
+  email: "associacaojet@gmail.com",
   address: "Sul do Piauí, Brasil",
   instagram: "@associacaojet",
   instagramLink: "https://instagram.com/associacaojet",
