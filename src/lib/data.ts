@@ -231,4 +231,4 @@ export const navLinks = [
 ];
 
 // Valor da mensalidade
-export const membershipFee = "R$ 20,00";
+export const membershipFee = "R$ 0,00";
