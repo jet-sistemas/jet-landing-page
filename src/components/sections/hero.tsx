@@ -21,24 +21,18 @@ export function Hero() {
           {/* Content */}
           <div className="flex max-w-2xl flex-col items-center text-center lg:items-start lg:text-left">
             {/* Badge */}
-            <div className="mb-6 inline-flex items-center gap-2 rounded-full border border-jet-red/30 bg-jet-red/10 px-4 py-1.5 text-sm font-medium text-jet-red">
+            <div className="mb-6 inline-flex items-center gap-2 rounded-full border border-jet-red/30 bg-jet-red/10 dark:border-accent/30 dark:bg-accent/10 px-4 py-1.5 text-sm font-medium text-jet-red dark:text-accent">
               <span className="relative flex size-2">
-                <span className="absolute inline-flex size-full animate-ping rounded-full bg-jet-red opacity-75" />
-                <span className="relative inline-flex size-2 rounded-full bg-jet-red" />
+                <span className="absolute inline-flex size-full animate-ping rounded-full bg-jet-red dark:bg-accent opacity-75" />
+                <span className="relative inline-flex size-2 rounded-full bg-jet-red dark:bg-accent" />
               </span>
               Associação Desportiva J&T
             </div>
 
             {/* Heading */}
             <h1 className="font-serif text-4xl font-bold leading-tight tracking-tight text-foreground sm:text-5xl md:text-6xl lg:text-7xl">
-              Transformando{" "}
-              <span className="bg-linear-to-r from-secondary via-jet-red to-primary bg-clip-text text-transparent">
-                vidas
-              </span>{" "}
-              através do{" "}
-              <span className="bg-linear-to-r from-primary to-jet-red bg-clip-text text-transparent">
-                esporte
-              </span>
+              Transformando <span className="gradient-primary-text">vidas</span>{" "}
+              através do <span className="gradient-support-text">esporte</span>
             </h1>
 
             {/* Description */}
@@ -89,9 +83,11 @@ export function Hero() {
               <div className="h-12 w-px bg-border" />
               <div className="flex flex-col items-center lg:items-start">
                 <span className="font-serif text-3xl font-bold text-foreground">
-                  R$ 20
+                  Gratuito
                 </span>
-                <span className="text-sm text-muted-foreground">/mês</span>
+                <span className="text-sm text-muted-foreground">
+                  aproveite e venha conhecer o projeto!
+                </span>
               </div>
             </div>
           </div>

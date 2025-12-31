@@ -24,7 +24,7 @@ export function Footer() {
   return (
     <footer
       id="contato"
-      className="relative overflow-hidden bg-primary text-primary-foreground"
+      className="relative overflow-hidden bg-primary dark:bg-background text-primary-foreground dark:text-primary-foreground"
     >
       {/* Decorative top border */}
       <div className="h-1 bg-linear-to-r from-secondary via-accent to-primary" />

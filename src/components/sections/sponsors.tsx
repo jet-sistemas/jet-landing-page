@@ -119,16 +119,7 @@ export function Sponsors() {
         <div className="mx-auto max-w-3xl text-center">
           <Badge className="mb-4">Patrocinadores</Badge>
           <h2 className="font-serif text-3xl font-bold tracking-tight text-foreground sm:text-4xl md:text-5xl">
-            Nossos{" "}
-            <span
-              className={cn(
-                "bg-linear-to-r",
-                "from-jet-gold to-jet-bronze bg-clip-text text-transparent",
-                "dark:from-jet-gold dark:via-jet-silver dark:to-jet-bronze"
-              )}
-            >
-              Parceiros
-            </span>
+            Nossos <span className={"gradient-sponsors-text"}>Parceiros</span>
           </h2>
           <p className="mt-4 text-lg text-muted-foreground">
             Empresas que acreditam no poder transformador do esporte e apoiam

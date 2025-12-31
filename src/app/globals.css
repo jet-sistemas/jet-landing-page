@@ -57,12 +57,13 @@
 "accent": "#FF336C"
 */
 
-/* #050469 */
-/* #f3f106 */
-/* #ee2923 */
-/* #FF336C */
+/* #050469 --primary */
+/* #f3f106 --secondary */
+/* #ee2923 --primary-red support color */
+/* #FF336C --accent*/
 
 /* #E9E9FB */
+/* #062437 --muted */
 
 :root {
   --radius: 0.625rem;
@@ -108,7 +109,7 @@
 }
 
 .dark {
-  --background: #050469;
+  --background: #041825;
   --foreground: #FFF;
 
   --card: #050469;
@@ -228,5 +229,62 @@
 
   .bg-gradient-test {
     background: linear-gradient(137deg,rgba(255, 255, 255, 1) 13%, rgba(243, 241, 6, 0.17) 67%, rgba(237, 52, 47, 0.12) 89%);
+  }
+
+  .gradient-primary {
+    @apply bg-linear-to-r;
+    @apply from-secondary via-accent to-jet-red;
+    @apply dark:from-secondary dark:via-accent dark:to-primary;
+  }
+
+  .gradient-primary-text {
+    @apply bg-clip-text text-transparent;
+    @apply bg-linear-to-r;
+    @apply from-secondary via-jet-red to-primary;
+    @apply dark:from-secondary dark:to-jet-red;
+  }
+
+  .gradient-secondary-text {
+    @apply bg-clip-text text-transparent;
+    @apply bg-linear-to-r;
+    @apply from-primary to-jet-red;
+    @apply dark:from-jet-blue dark:to-accent;
+  }
+
+  .gradient-support-text {
+    @apply bg-clip-text text-transparent;
+    @apply bg-linear-to-r;
+    @apply from-primary to-jet-red;
+    @apply dark:from-white dark:to-accent;
+  }
+
+  .gradient-gold-accent {
+    @apply bg-linear-to-r;
+    @apply from-secondary to-jet-gold dark:from-jet-gold dark:to-jet-bronze;
+  }
+
+  .gradient-gold-accent-glow {
+    @apply bg-linear-to-r;
+    @apply from-secondary to-jet-gold dark:from-jet-gold dark:to-jet-bronze;
+    @apply transition-all duration-300 hover:font-extrabold;
+    @apply hover:shadow-[0_0_30px_rgba(243,241,6,0.8)] dark:hover:shadow-[0_0_30px_rgba(242,181,68,0.8)];
+  }
+
+  .gradient-membership {
+    @apply bg-linear-to-r;
+    @apply from-primary to-accent;
+  }
+
+  .gradient-sponsors {
+    @apply bg-linear-to-r;
+    @apply from-jet-gold to-jet-bronze;
+    @apply dark:from-jet-gold dark:via-jet-silver dark:to-jet-bronze;
+  }
+
+  .gradient-sponsors-text {
+    @apply bg-clip-text text-transparent;
+    @apply bg-linear-to-r;
+    @apply from-jet-gold to-jet-bronze;
+    @apply dark:from-jet-gold dark:via-jet-silver dark:to-jet-bronze;
   }
 }

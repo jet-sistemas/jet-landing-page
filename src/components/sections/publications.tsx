@@ -1,6 +1,7 @@
+import { ArrowRight, Calendar, ImageIcon, Newspaper } from "lucide-react";
 import Link from "next/link";
-import { Calendar, ArrowRight, Newspaper, ImageIcon } from "lucide-react";
 
+import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -9,8 +10,7 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
-import { publications } from "@/lib/data";
+import { Publication, publications } from "@/lib/data";
 import { cn } from "@/lib/utils";
 
 function formatDate(dateString: string): string {
@@ -22,16 +22,19 @@ function formatDate(dateString: string): string {
   }).format(date);
 }
 
+type PublicationCardProps = {
+  publication: (typeof publications)[0];
+  featured?: boolean;
+};
+
 function PublicationCard({
   publication,
   featured = false,
-}: {
-  publication: (typeof publications)[0];
-  featured?: boolean;
-}) {
+}: PublicationCardProps) {
   return (
     <Card
       className={cn(
+        "hover:cursor-pointer",
         "group overflow-hidden border-border/50 bg-card/80 transition-all hover:border-accent/30 hover:shadow-lg",
         featured && "lg:col-span-2 lg:row-span-1 pt-0"
       )}
@@ -47,24 +50,18 @@ function PublicationCard({
           featured ? "h-64" : "h-48"
         )}
       >
-        <div className="flex size-full items-center justify-center bg-gradient-to-br from-primary/20 to-accent/20">
+        <div className="flex size-full items-center justify-center bg-linear-to-br from-primary/20 to-accent/20">
           <ImageIcon className="size-16 text-muted-foreground/50" />
         </div>
 
         {/* Category badge */}
         <div className="absolute top-4 left-4 flex gap-2">
-          <Badge
-            variant="secondary"
-            className="relative bg-background/90 backdrop-blur-sm"
-          >
+          <Badge variant="secondary" className="relative">
             {publication.category}
           </Badge>
 
           {featured && (
-            <Badge
-              variant="secondary"
-              className=" bg-green-500/90 text-white font-bold backdrop-blur-sm"
-            >
+            <Badge className=" bg-green-500/90 text-white font-bold backdrop-blur-sm">
               Novidade
             </Badge>
           )}
@@ -106,8 +103,37 @@ function PublicationCard({
   );
 }
 
-export function Publications() {
+function EmptyPublication() {
+  return (
+    <div className="mt-12 flex flex-col items-center justify-center rounded-xl border border-dashed border-border/50 bg-muted/20 py-16 text-center">
+      <Newspaper className="size-12 text-muted-foreground/50" />
+      <h3 className="mt-4 text-lg font-medium text-foreground">
+        Em breve teremos novidades para compartilhar!
+      </h3>
+    </div>
+  );
+}
+
+type PublicationsGridProps = {
+  publications: Publication[];
+};
+
+function PublicationsGrid({ publications }: PublicationsGridProps) {
   const [featuredPublication, ...otherPublications] = publications;
+
+  return (
+    <div className="mt-12 grid gap-6 md:grid-cols-2 lg:grid-cols-4">
+      <PublicationCard publication={featuredPublication} featured />
+
+      {otherPublications.map((publication) => (
+        <PublicationCard key={publication.id} publication={publication} />
+      ))}
+    </div>
+  );
+}
+
+export function Publications() {
+  const hasPublications = publications.length > 0;
 
   return (
     <section
@@ -135,37 +161,21 @@ export function Publications() {
               comunidade esportiva.
             </p>
           </div>
-          <Button asChild variant="outline" className="group shrink-0">
-            <Link href="/publicacoes">
-              Ver todas
-              <ArrowRight className="size-4 transition-transform group-hover:translate-x-1" />
-            </Link>
-          </Button>
+
+          {hasPublications && (
+            <Button asChild variant="outline" className="group shrink-0">
+              <Link href="/publicacoes">
+                Ver todas
+                <ArrowRight className="size-4 transition-transform group-hover:translate-x-1" />
+              </Link>
+            </Button>
+          )}
         </div>
 
         {/* Publications Grid */}
-        <div className="mt-12 grid gap-6 md:grid-cols-2 lg:grid-cols-4">
-          {/* Featured publication */}
-          <PublicationCard publication={featuredPublication} featured />
+        {hasPublications && <PublicationsGrid publications={publications} />}
 
-          {/* Other publications */}
-          {otherPublications.map((publication) => (
-            <PublicationCard key={publication.id} publication={publication} />
-          ))}
-        </div>
-
-        {/* Empty state (if no publications) */}
-        {publications.length === 0 && (
-          <div className="mt-12 flex flex-col items-center justify-center rounded-xl border border-dashed border-border/50 bg-muted/20 py-16 text-center">
-            <Newspaper className="size-12 text-muted-foreground/50" />
-            <h3 className="mt-4 text-lg font-medium text-foreground">
-              Nenhuma publicação ainda
-            </h3>
-            <p className="mt-2 text-muted-foreground">
-              Em breve teremos novidades para compartilhar!
-            </p>
-          </div>
-        )}
+        {!hasPublications && <EmptyPublication />}
       </div>
     </section>
   );

@@ -36,8 +36,8 @@ export function Benefits() {
         {/* Benefits Grid */}
         <div className="mt-16 grid gap-8 lg:grid-cols-2">
           {/* Associados Card */}
-          <Card className="relative overflow-hidden border-2 border-primary/20 bg-card/80 backdrop-blur-sm">
-            <div className="absolute top-0 left-0 h-1 w-full bg-linear-to-r from-primary to-accent" />
+          <Card className="relative overflow-hidden border-2 border-primary/20 dark:border-accent/20 bg-card/80 backdrop-blur-sm">
+            <div className="absolute top-0 left-0 h-1 w-full gradient-membership" />
             <CardHeader className="pb-4">
               <div className="mb-2 flex items-center justify-between">
                 <Badge variant={"accent"}>Associado</Badge>
@@ -60,7 +60,13 @@ export function Benefits() {
               <div className="space-y-4">
                 {associateBenefits.map((benefit) => (
                   <div key={benefit.title} className="flex gap-4">
-                    <div className="flex size-10 shrink-0 items-center justify-center rounded-lg bg-primary/10 text-primary">
+                    <div
+                      className={cn(
+                        "flex size-10 shrink-0 items-center justify-center rounded-lg",
+                        "bg-primary/10 text-primary",
+                        "dark:bg-foreground/10 dark:text-foreground"
+                      )}
+                    >
                       <benefit.icon className="size-5" />
                     </div>
                     <div>
@@ -89,14 +95,20 @@ export function Benefits() {
                     <Check className="mt-0.5 size-4 shrink-0 text-green-500" />
                     <span>Envie: Nome completo, CPF e WhatsApp</span>
                   </li>
+                  <li>OU</li>
                   <li className="flex items-start gap-2">
                     <Check className="mt-0.5 size-4 shrink-0 text-green-500" />
-                    <span>Mensalidade inicial: {membershipFee}</span>
+                    {/* <span>Mensalidade inicial: {membershipFee}</span> */}
+                    <span>Preencha o formulário de cadastro</span>
                   </li>
                 </ul>
               </div>
 
-              <Button asChild className="w-full group" size="lg">
+              <Button
+                asChild
+                className="w-full group gradient-membership text-white"
+                size="lg"
+              >
                 <Link href="#pre-cadastro">
                   Quero ser Associado
                   <ArrowRight className="size-4 transition-transform group-hover:translate-x-1" />
@@ -109,9 +121,7 @@ export function Benefits() {
           <Card className="relative overflow-hidden border-2 border-jet-gold/30 bg-card/80 backdrop-blur-sm">
             <div
               className={cn(
-                "absolute top-0 left-0 h-1 w-full bg-linear-to-r",
-                "from-jet-gold to-jet-bronze",
-                "dark:from-jet-gold dark:via-jet-silver dark:to-jet-bronze"
+                "absolute top-0 left-0 h-1 w-full gradient-sponsors"
               )}
             />
             <CardHeader className="pb-4">
@@ -128,55 +138,59 @@ export function Benefits() {
                 como saúde, educação e desenvolvimento social.
               </p>
             </CardHeader>
-            <CardContent className="space-y-6">
-              <div className="space-y-4">
-                {sponsorBenefits.map((benefit) => (
-                  <div key={benefit.title} className="flex gap-4">
-                    <div className="flex size-10 shrink-0 items-center justify-center rounded-lg bg-jet-gold/10 text-jet-gold">
-                      <benefit.icon className="size-5" />
+            <CardContent className="flex flex-col justify-between h-full space-y-6">
+              <div className="flex flex-col gap-6">
+                <div className="space-y-4">
+                  {sponsorBenefits.map((benefit) => (
+                    <div key={benefit.title} className="flex gap-4">
+                      <div className="flex size-10 shrink-0 items-center justify-center rounded-lg bg-jet-gold/10 text-jet-gold">
+                        <benefit.icon className="size-5" />
+                      </div>
+                      <div>
+                        <h4 className="font-medium text-foreground">
+                          {benefit.title}
+                        </h4>
+                        <p className="text-sm text-muted-foreground">
+                          {benefit.description}
+                        </p>
+                      </div>
                     </div>
-                    <div>
-                      <h4 className="font-medium text-foreground">
-                        {benefit.title}
-                      </h4>
-                      <p className="text-sm text-muted-foreground">
-                        {benefit.description}
-                      </p>
-                    </div>
-                  </div>
-                ))}
-              </div>
+                  ))}
+                </div>
 
-              {/* Tiers explanation */}
-              <div className="rounded-lg bg-muted/50 p-4">
-                <h4 className="mb-3 font-medium text-foreground">
-                  Categorias de Patrocínio:
-                </h4>
-                <div className="space-y-2 text-sm">
-                  <div className="flex items-center gap-2">
-                    <div className="size-3 rounded-full bg-jet-gold" />
-                    <span className="font-medium text-jet-gold dark:text-jet-gold">
-                      Ouro
-                    </span>
-                    <span className="text-muted-foreground">
-                      - Máxima visibilidade
-                    </span>
-                  </div>
-                  <div className="flex items-center gap-2">
-                    <div className="size-3 rounded-full bg-jet-silver" />
-                    <span className="font-medium text-muted-foreground">
-                      Prata
-                    </span>
-                    <span className="text-muted-foreground">
-                      - Destaque em eventos
-                    </span>
-                  </div>
-                  <div className="flex items-center gap-2">
-                    <div className="size-3 rounded-full bg-jet-bronze" />
-                    <span className="font-medium text-jet-bronze">Bronze</span>
-                    <span className="text-muted-foreground">
-                      - Presença garantida
-                    </span>
+                {/* Tiers explanation */}
+                <div className="rounded-lg bg-muted/50 p-4">
+                  <h4 className="mb-3 font-medium text-foreground">
+                    Categorias de Patrocínio:
+                  </h4>
+                  <div className="space-y-2 text-sm">
+                    <div className="flex items-center gap-2">
+                      <div className="size-3 rounded-full bg-jet-gold" />
+                      <span className="font-medium text-jet-gold dark:text-jet-gold">
+                        Ouro
+                      </span>
+                      <span className="text-muted-foreground">
+                        - Máxima visibilidade
+                      </span>
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <div className="size-3 rounded-full bg-jet-silver" />
+                      <span className="font-medium text-muted-foreground">
+                        Prata
+                      </span>
+                      <span className="text-muted-foreground">
+                        - Destaque em eventos
+                      </span>
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <div className="size-3 rounded-full bg-jet-bronze" />
+                      <span className="font-medium text-jet-bronze">
+                        Bronze
+                      </span>
+                      <span className="text-muted-foreground">
+                        - Presença garantida
+                      </span>
+                    </div>
                   </div>
                 </div>
               </div>
@@ -184,7 +198,7 @@ export function Benefits() {
               <Button
                 asChild
                 variant="secondary"
-                className="w-full group bg-linear-to-r from-secondary to-jet-gold"
+                className="w-full mt-auto group bg-linear-to-r from-secondary to-jet-gold self-end"
                 size="lg"
               >
                 <Link href="#pre-cadastro">
