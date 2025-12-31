@@ -1,8 +1,17 @@
 "use client";
 
 import { zodResolver } from "@hookform/resolvers/zod";
-import { CreditCard, MessageCircle, Phone, Send, User } from "lucide-react";
-import { Activity, useState } from "react";
+import {
+  CreditCard,
+  Copy,
+  Heart,
+  MessageCircle,
+  Phone,
+  Send,
+  User,
+} from "lucide-react";
+import Image from "next/image";
+import { useState } from "react";
 import {
   FormProvider,
   SubmitHandler,
@@ -241,25 +250,19 @@ export function PreRegister() {
                       </RadioGroup>
                     </div>
 
-                    <Activity
-                      mode={partnerType === "associado" ? "visible" : "hidden"}
-                    >
+                    {partnerType === "associado" && (
                       <FormMembership
                         onCPFChange={handleCPFChange}
                         onPhoneChange={handlePhoneChange}
                       />
-                    </Activity>
+                    )}
 
-                    <Activity
-                      mode={
-                        partnerType === "patrocinador" ? "visible" : "hidden"
-                      }
-                    >
+                    {partnerType === "patrocinador" && (
                       <FormSponsor
                         onCNPJChange={handleCNPJChange}
                         onPhoneChange={handlePhoneChange}
                       />
-                    </Activity>
+                    )}
 
                     <Button
                       type="submit"
@@ -372,6 +375,10 @@ export function PreRegister() {
               </CardContent>
             </Card>
           </div>
+        </div>
+        {/* Donation Card */}
+        <div className="mt-6 smmt-12 max-w-3xl mx-auto">
+          <DonationCard />
         </div>
       </div>
     </section>
@@ -518,5 +525,92 @@ function FormSponsor({ onCNPJChange, onPhoneChange }: FormSponsorProps) {
         )}
       </div>
     </>
+  );
+}
+
+const PIX_KEY = "associacaojet@gmail.com";
+
+function DonationCard() {
+  const [copied, setCopied] = useState(false);
+
+  const handleCopyPix = async () => {
+    try {
+      await navigator.clipboard.writeText(PIX_KEY);
+      setCopied(true);
+      setTimeout(() => setCopied(false), 2000);
+    } catch (err) {
+      console.error("Erro ao copiar:", err);
+    }
+  };
+
+  return (
+    <Card className="border-2 border-accent/20 bg-accent/5 dark:bg-accent/15">
+      <CardHeader className="pb-3">
+        <CardTitle className="flex items-center gap-2 font-serif text-xl">
+          <Heart className="size-5 text-accent" />
+          Faça uma Doação
+        </CardTitle>
+        <CardDescription>
+          Ajude a manter nossos projetos esportivos com qualquer valor!
+        </CardDescription>
+      </CardHeader>
+      <CardContent className="space-y-4">
+        {/* QR Code */}
+        <div className="flex justify-center">
+          <div className="overflow-hidden rounded-lg border-2 border-border bg-white p-2">
+            <Image
+              src="/qrcode-pix.jpeg"
+              alt="QR Code PIX para doação"
+              width={160}
+              height={160}
+              className="size-40"
+            />
+          </div>
+        </div>
+
+        {/* Informações PIX */}
+        <div className="space-y-3 rounded-lg bg-background/50 p-4">
+          <div className="space-y-1">
+            <p className="text-xs font-medium text-muted-foreground uppercase tracking-wide">
+              Chave PIX (E-mail)
+            </p>
+            <div className="flex gap-2 flex-wrap sm:flex-nowrap">
+              <code className="flex-1 rounded bg-muted px-2 py-1.5 text-sm font-medium text-foreground">
+                {PIX_KEY}
+              </code>
+              <Button
+                type="button"
+                variant="outline"
+                size="sm"
+                onClick={handleCopyPix}
+                className={cn(
+                  "shrink-0 transition-colors w-full sm:w-auto",
+                  copied && "border-green-500 text-green-500"
+                )}
+              >
+                <Copy className="size-4" />
+                {copied ? "Copiado!" : "Copiar"}
+              </Button>
+            </div>
+          </div>
+
+          <div className="space-y-1">
+            <p className="text-xs font-medium text-muted-foreground uppercase tracking-wide">
+              Dados Bancários
+            </p>
+            <div className="text-sm text-foreground">
+              <p className="font-medium">Banco do Brasil</p>
+              <p className="text-muted-foreground">
+                Conta Corrente • Ag 96 • CC 80419
+              </p>
+            </div>
+          </div>
+        </div>
+
+        <p className="text-center text-xs text-muted-foreground">
+          Escaneie o QR Code ou copie a chave PIX para doar qualquer valor
+        </p>
+      </CardContent>
+    </Card>
   );
 }
