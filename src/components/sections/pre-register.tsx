@@ -37,7 +37,7 @@ import {
   PartnerType,
   PRE_REGISTER_SCHEMA_REFINED,
   PreRegisterForm,
-} from "@/types/validations/PreRegisterForm";
+} from "@/types/validations/pre-register-form";
 
 const REQUESTED_DATA_MEMBERSHIP = [
   "Nome Completo",
