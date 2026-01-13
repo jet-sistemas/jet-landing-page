@@ -1,4 +1,12 @@
-import { ArrowRight, Calendar, ImageIcon, Newspaper } from "lucide-react";
+"use client";
+
+import {
+  ArrowRight,
+  Calendar,
+  ImageIcon,
+  Loader2,
+  Newspaper,
+} from "lucide-react";
 import Link from "next/link";
 
 import { Badge } from "@/components/ui/badge";
@@ -10,8 +18,11 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { Publication, publications } from "@/lib/data";
+import { publications } from "@/lib/data";
 import { cn } from "@/lib/utils";
+import { Publication } from "@/types/entities";
+import { useEffect, useState } from "react";
+import { fetchStrapiContent } from "@/lib/strapi";
 
 function formatDate(dateString: string): string {
   const date = new Date(dateString);
@@ -120,19 +131,62 @@ type PublicationsGridProps = {
 
 function PublicationsGrid({ publications }: PublicationsGridProps) {
   const [featuredPublication, ...otherPublications] = publications;
+  console.log("🚀 ~ PublicationsGrid ~ publications:", publications);
 
   return (
     <div className="mt-12 grid gap-6 md:grid-cols-2 lg:grid-cols-4">
-      <PublicationCard publication={featuredPublication} featured />
+      {/* <PublicationCard publication={featuredPublication} featured />
 
       {otherPublications.map((publication) => (
         <PublicationCard key={publication.id} publication={publication} />
-      ))}
+      ))} */}
+      Tem coisa aqui
     </div>
   );
 }
 
 export function Publications() {
+  const [publications, setPublications] = useState<Publication[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+
+  // useEffect(() => {
+  //   async function loadPublications() {
+  //     try {
+  //       setIsLoading(true);
+  //       const response = await fetch("/api/strapi/articles");
+  //       const result = await response.json();
+
+  //       if (result.success) {
+  //         setPublications(result.data);
+  //       } else {
+  //         setError("Erro ao carregar publicações");
+  //       }
+  //     } catch (err) {
+  //       console.error("Erro:", err);
+  //       setError("Erro ao carregar publicações");
+  //     } finally {
+  //       setIsLoading(false);
+  //     }
+  //   }
+
+  //   loadPublications();
+  // }, []);
+
+  useEffect(() => {
+    // fetchStrapiContent<Publication>("articles")
+    //   .then((response) => {
+    //     setPublications(response.data.map((item) => item.attributes));
+    //   })
+    //   .catch((error) => {
+    //     console.error("Erro ao carregar publicações:", error);
+    //     setError("Erro ao carregar publicações");
+    //   })
+    //   .finally(() => {
+    //     setIsLoading(false);
+    //   });
+  });
+
   const hasPublications = publications.length > 0;
 
   return (
@@ -171,6 +225,14 @@ export function Publications() {
             </Button>
           )}
         </div>
+
+        {isLoading ? (
+          <div className="flex items-center justify-center">
+            <Loader2 className="size-4 animate-spin" />
+          </div>
+        ) : (
+          error && <div className="text-red-500">{error}</div>
+        )}
 
         {/* Publications Grid */}
         {hasPublications && <PublicationsGrid publications={publications} />}

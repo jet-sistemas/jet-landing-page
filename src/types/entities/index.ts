@@ -28,3 +28,56 @@ export type Publication = {
   slug: string;
   category: string;
 };
+
+export type Category = {
+  createdAt: string;
+  description: string | null;
+  documentId: string;
+  id: number;
+  name: string;
+  publishedAt?: string;
+  slug: string;
+  updatedAt: string;
+};
+
+export type Image = {
+  id: number;
+  documentId: string;
+  name: string;
+  alternativeText: string;
+  caption: string;
+  width: number;
+  height: number;
+  formats: Formats;
+  hash: string;
+  ext: string;
+  mime: string;
+  size: number;
+  url: string;
+  previewUrl: string | null;
+  provider: string;
+  provider_metadata: string | null;
+  createdAt: string;
+  updatedAt: string;
+  publishedAt: string;
+};
+
+export type Formats = {
+  thumbnail: Format;
+  large: Format;
+  medium: Format;
+  small: Format;
+};
+
+export type Format = {
+  name: string;
+  hash: string;
+  ext: string;
+  mime: string;
+  path: string | null;
+  width: number;
+  height: number;
+  size: number;
+  sizeInBytes: number;
+  url: string;
+};
