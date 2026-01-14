@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 
-import { Image } from "@/types/entities";
+import { Category, Image } from "@/types/entities";
 
 /**
  * Estrutura padrão de resposta da API do Strapi v4
@@ -22,40 +22,76 @@ export interface StrapiResponse<T> {
  * Estrutura padrão de um item de dados do Strapi
  */
 export type Article = {
+  id: number;
+  documentId: string;
   title: string;
   description?: string;
   slug?: string;
   publishedAt: string;
   createdAt: string;
   updatedAt: string;
-  category?: string;
+  category?: Category;
   cover?: Image;
   [key: string]: any; // Permite campos adicionais
 };
 
-export type ContentType = "articles" | "author" | "category" | "user";
+export type ContentType = "articles" | "author" | "categories" | "user";
+
+/**
+ * Operadores de filtro do Strapi
+ */
+export type StrapiFilterOperator =
+  | "$eq"
+  | "$eqi"
+  | "$ne"
+  | "$nei"
+  | "$lt"
+  | "$lte"
+  | "$gt"
+  | "$gte"
+  | "$in"
+  | "$notIn"
+  | "$contains"
+  | "$notContains"
+  | "$containsi"
+  | "$notContainsi"
+  | "$null"
+  | "$notNull"
+  | "$between"
+  | "$startsWith"
+  | "$startsWithi"
+  | "$endsWith"
+  | "$endsWithi";
+
+export type StrapiFilter = {
+  field: string;
+  operator: StrapiFilterOperator;
+  value: any;
+};
 
 export type StrapiArticle = Article;
 
+export type FetchStrapiOptions = {
+  populate?: string | string[];
+  sort?: string | string[];
+  pagination?: {
+    page?: number;
+    pageSize?: number;
+    limit?: number;
+    start?: number;
+  };
+  filters?: StrapiFilter[];
+};
+
 /**
- * Busca artigos do Strapi usando a estrutura padrão
- * @param contentType - Nome do Content Type (ex: 'articles', 'posts')
+ * Busca conteúdo do Strapi usando a estrutura padrão
+ * @param contentType - Nome do Content Type (ex: 'articles', 'categories')
  * @param options - Opções de busca
  */
-export async function fetchStrapiContent(
+export async function fetchStrapiContent<T = StrapiArticle>(
   contentType: ContentType,
-  options: {
-    populate?: string | string[];
-    sort?: string | string[];
-    pagination?: {
-      page?: number;
-      pageSize?: number;
-      limit?: number;
-      start?: number;
-    };
-    filters?: Record<string, any>;
-  } = {}
-): Promise<StrapiResponse<StrapiArticle>> {
+  options: FetchStrapiOptions = {}
+): Promise<StrapiResponse<T>> {
   const strapiUrl = process.env.NEXT_PUBLIC_STRAPI_URL;
   const url = new URL(`${strapiUrl}/api/${contentType}`);
 
@@ -69,10 +105,6 @@ export async function fetchStrapiContent(
       url.searchParams.append("populate", options.populate);
     }
   }
-  // else {
-  //   // Populate padrão: todos os campos
-  //   url.searchParams.append("populate", "*");
-  // }
 
   // Sort
   if (options.sort) {
@@ -116,10 +148,13 @@ export async function fetchStrapiContent(
     }
   }
 
-  // Filters
-  if (options.filters) {
-    Object.entries(options.filters).forEach(([key, value]) => {
-      url.searchParams.append(`filters[${key}]`, String(value));
+  // Advanced Filters com operadores Strapi
+  if (options.filters && options.filters.length > 0) {
+    options.filters.forEach((filter) => {
+      url.searchParams.append(
+        `filters[${filter.field}][${filter.operator}]`,
+        String(filter.value)
+      );
     });
   }
 
@@ -134,8 +169,57 @@ export async function fetchStrapiContent(
     throw new Error(`Erro ao buscar ${contentType}: ${response.statusText}`);
   }
 
-  const data: StrapiResponse<StrapiArticle> = await response.json();
+  const data: StrapiResponse<T> = await response.json();
   return data;
+}
+
+/**
+ * Busca artigos do Strapi com opções de filtro para busca e categoria
+ */
+export async function fetchArticles(options: {
+  page?: number;
+  pageSize?: number;
+  search?: string;
+  categorySlug?: string;
+} = {}): Promise<StrapiResponse<StrapiArticle>> {
+  const filters: StrapiFilter[] = [];
+
+  if (options.search) {
+    filters.push({
+      field: "title",
+      operator: "$containsi",
+      value: options.search,
+    });
+  }
+
+  if (options.categorySlug) {
+    filters.push({
+      field: "category][slug",
+      operator: "$eq",
+      value: options.categorySlug,
+    });
+  }
+
+  return fetchStrapiContent<StrapiArticle>("articles", {
+    populate: ["cover", "category"],
+    pagination: {
+      page: options.page || 1,
+      pageSize: options.pageSize || 9,
+    },
+    filters,
+  });
+}
+
+/**
+ * Busca todas as categorias do Strapi
+ */
+export async function fetchCategories(): Promise<StrapiResponse<Category>> {
+  return fetchStrapiContent<Category>("categories", {
+    sort: "name:asc",
+    pagination: {
+      pageSize: 100,
+    },
+  });
 }
 
 /**

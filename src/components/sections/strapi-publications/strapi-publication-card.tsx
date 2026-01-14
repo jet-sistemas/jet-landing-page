@@ -60,14 +60,22 @@ export function StrapiPublicationCard({
           </div>
         )}
 
-        {/* Featured badge */}
-        {featured && (
-          <div className="absolute top-4 left-4 flex gap-2">
+        {/* Badges */}
+        <div className="absolute top-4 left-4 flex gap-2">
+          {featured && (
             <Badge className="bg-green-500/90 text-white font-bold backdrop-blur-sm">
               Novidade
             </Badge>
-          </div>
-        )}
+          )}
+          {article?.category?.name && (
+            <Badge
+              variant="outline"
+              className="bg-background/80 backdrop-blur-sm border-border/50"
+            >
+              {article.category.name}
+            </Badge>
+          )}
+        </div>
 
         {/* Overlay on hover */}
         <div className="absolute inset-0 bg-gradient-to-t from-background/80 via-transparent to-transparent opacity-0 transition-opacity group-hover:opacity-100" />
@@ -94,7 +102,7 @@ export function StrapiPublicationCard({
           {description}
         </CardDescription>
         <Link
-          href={`/artigos/${slug}`}
+          href={`/noticias/${slug}`}
           className="mt-4 inline-flex items-center gap-1 text-sm font-medium text-accent hover:underline"
         >
           Ler mais

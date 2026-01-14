@@ -194,11 +194,11 @@ export const contactInfo = {
 
 // Links de navegação
 export const navLinks = [
-  { label: "Início", href: "#inicio" },
-  { label: "Benefícios", href: "#beneficios" },
-  { label: "Patrocinadores", href: "#patrocinadores" },
-  { label: "Publicações", href: "#publicacoes" },
-  { label: "Contato", href: "#contato" },
+  { label: "Início", href: "/" },
+  { label: "Benefícios", href: "/#beneficios" },
+  { label: "Patrocinadores", href: "/#patrocinadores" },
+  { label: "Notícias", href: "/noticias" },
+  { label: "Contato", href: "/#contato" },
 ];
 
 // Valor da mensalidade

@@ -88,7 +88,7 @@ export function StrapiPublications() {
               className="group shrink-0"
               disabled={isLoading || !!error}
             >
-              <Link href="/artigos">
+              <Link href="/noticias">
                 Ver todas
                 <ArrowRight className="size-4 transition-transform group-hover:translate-x-1" />
               </Link>
