@@ -40,6 +40,17 @@ export type Category = {
   updatedAt: string;
 };
 
+// Autor de artigos do Strapi
+export type Author = {
+  id: number;
+  documentId: string;
+  name: string;
+  email?: string;
+  avatar?: Image;
+  createdAt: string;
+  updatedAt: string;
+};
+
 export type Image = {
   id: number;
   documentId: string;

@@ -5,12 +5,22 @@ import { useRouter, useSearchParams } from "next/navigation";
 import { Newspaper } from "lucide-react";
 
 import { Badge } from "@/components/ui/badge";
-import { fetchArticles, fetchCategories, StrapiArticle } from "@/lib/strapi";
+import {
+  fetchArticles,
+  fetchCategories,
+  SortOrder,
+  StrapiArticle,
+} from "@/lib/strapi";
 import { Category } from "@/types/entities";
 
 import { NewsFilters } from "./news-filters";
 import { NewsGrid } from "./news-grid";
 import { NewsPagination } from "./news-pagination";
+import { FeaturedArticle } from "./featured-article";
+import {
+  GoldSponsorsSidebar,
+  GoldSponsorsCompact,
+} from "./gold-sponsors-sidebar";
 
 const ITEMS_PER_PAGE = 9;
 
@@ -32,7 +42,20 @@ export function NewsPageContent() {
   // Get filters from URL
   const searchQuery = searchParams.get("q") || "";
   const selectedCategory = searchParams.get("categoria") || null;
+  const sortOrder = (searchParams.get("ordem") as SortOrder) || "recent";
   const pageFromUrl = parseInt(searchParams.get("pagina") || "1", 10);
+
+  // Determine if any filter is active
+  const hasActiveFilters = Boolean(
+    searchQuery || selectedCategory || sortOrder !== "recent" || currentPage > 1
+  );
+
+  // Featured article is the first one when no filters are active
+  const featuredArticle =
+    !hasActiveFilters && articles.length > 0 ? articles[0] : null;
+
+  // Articles to display in grid (excluding featured if shown)
+  const gridArticles = featuredArticle ? articles.slice(1) : articles;
 
   // Sync URL page with state
   useEffect(() => {
@@ -43,7 +66,12 @@ export function NewsPageContent() {
 
   // Update URL with filters
   const updateUrl = useCallback(
-    (params: { q?: string; categoria?: string | null; pagina?: number }) => {
+    (params: {
+      q?: string;
+      categoria?: string | null;
+      ordem?: SortOrder;
+      pagina?: number;
+    }) => {
       const newParams = new URLSearchParams(searchParams.toString());
 
       if (params.q !== undefined) {
@@ -59,6 +87,14 @@ export function NewsPageContent() {
           newParams.set("categoria", params.categoria);
         } else {
           newParams.delete("categoria");
+        }
+      }
+
+      if (params.ordem !== undefined) {
+        if (params.ordem && params.ordem !== "recent") {
+          newParams.set("ordem", params.ordem);
+        } else {
+          newParams.delete("ordem");
         }
       }
 
@@ -106,6 +142,7 @@ export function NewsPageContent() {
           pageSize: ITEMS_PER_PAGE,
           search: searchQuery || undefined,
           categorySlug: selectedCategory || undefined,
+          sortOrder: sortOrder,
         });
 
         if (result.data) {
@@ -118,16 +155,14 @@ export function NewsPageContent() {
         }
       } catch (err) {
         console.error("Erro ao carregar artigos:", err);
-        setError(
-          "Erro ao carregar as notícias. Tente novamente mais tarde."
-        );
+        setError("Erro ao carregar as notícias. Tente novamente mais tarde.");
       } finally {
         setIsLoading(false);
       }
     }
 
     loadArticles();
-  }, [currentPage, searchQuery, selectedCategory]);
+  }, [currentPage, searchQuery, selectedCategory, sortOrder]);
 
   // Handlers
   const handleSearchChange = useCallback(
@@ -140,6 +175,13 @@ export function NewsPageContent() {
   const handleCategoryChange = useCallback(
     (categorySlug: string | null) => {
       updateUrl({ categoria: categorySlug, pagina: 1 });
+    },
+    [updateUrl]
+  );
+
+  const handleSortOrderChange = useCallback(
+    (order: SortOrder) => {
+      updateUrl({ ordem: order, pagina: 1 });
     },
     [updateUrl]
   );
@@ -183,11 +225,20 @@ export function NewsPageContent() {
             categories={categories}
             selectedCategory={selectedCategory}
             searchQuery={searchQuery}
+            sortOrder={sortOrder}
             onSearchChange={handleSearchChange}
             onCategoryChange={handleCategoryChange}
+            onSortOrderChange={handleSortOrderChange}
             isLoading={isLoading}
           />
         </div>
+
+        {/* Featured Article - only when no filters active */}
+        {featuredArticle && !isLoading && (
+          <div className="mb-10">
+            <FeaturedArticle article={featuredArticle} />
+          </div>
+        )}
 
         {/* Error State */}
         {error && (
@@ -196,24 +247,39 @@ export function NewsPageContent() {
           </div>
         )}
 
-        {/* Articles Grid */}
-        <div className="mb-10">
-          <NewsGrid articles={articles} isLoading={isLoading} />
+        {/* Main Content with Sidebar */}
+        <div className="flex flex-col gap-8 lg:flex-row">
+          {/* Articles Grid - Main Content */}
+          <div className="flex-1 min-w-0">
+            <NewsGrid articles={gridArticles} isLoading={isLoading} />
+
+            {/* Pagination */}
+            {!isLoading && !error && articles.length > 0 && (
+              <div className="border-t border-border/50 pt-8 mt-10">
+                <NewsPagination
+                  currentPage={currentPage}
+                  totalPages={totalPages}
+                  totalItems={totalItems}
+                  itemsPerPage={ITEMS_PER_PAGE}
+                  onPageChange={handlePageChange}
+                  isLoading={isLoading}
+                />
+              </div>
+            )}
+          </div>
+
+          {/* Sidebar - Desktop Only */}
+          <div className="hidden lg:block lg:w-72 lg:shrink-0">
+            <div className="sticky top-28">
+              <GoldSponsorsSidebar />
+            </div>
+          </div>
         </div>
 
-        {/* Pagination */}
-        {!isLoading && !error && articles.length > 0 && (
-          <div className="border-t border-border/50 pt-8">
-            <NewsPagination
-              currentPage={currentPage}
-              totalPages={totalPages}
-              totalItems={totalItems}
-              itemsPerPage={ITEMS_PER_PAGE}
-              onPageChange={handlePageChange}
-              isLoading={isLoading}
-            />
-          </div>
-        )}
+        {/* Gold Sponsors - Mobile/Tablet */}
+        <div className="mt-12 lg:hidden">
+          <GoldSponsorsCompact />
+        </div>
       </div>
     </section>
   );

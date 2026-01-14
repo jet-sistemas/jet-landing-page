@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 
-import { Category, Image } from "@/types/entities";
+import { Author, Category, Image } from "@/types/entities";
 
 /**
  * Estrutura padrão de resposta da API do Strapi v4
@@ -32,8 +32,11 @@ export type Article = {
   updatedAt: string;
   category?: Category;
   cover?: Image;
+  author?: Author;
   [key: string]: any; // Permite campos adicionais
 };
+
+export type SortOrder = "recent" | "oldest";
 
 export type ContentType = "articles" | "author" | "categories" | "user";
 
@@ -174,13 +177,14 @@ export async function fetchStrapiContent<T = StrapiArticle>(
 }
 
 /**
- * Busca artigos do Strapi com opções de filtro para busca e categoria
+ * Busca artigos do Strapi com opções de filtro para busca, categoria e ordenação
  */
 export async function fetchArticles(options: {
   page?: number;
   pageSize?: number;
   search?: string;
   categorySlug?: string;
+  sortOrder?: SortOrder;
 } = {}): Promise<StrapiResponse<StrapiArticle>> {
   const filters: StrapiFilter[] = [];
 
@@ -200,8 +204,13 @@ export async function fetchArticles(options: {
     });
   }
 
+  // Determina a ordenação
+  const sort =
+    options.sortOrder === "oldest" ? "publishedAt:asc" : "publishedAt:desc";
+
   return fetchStrapiContent<StrapiArticle>("articles", {
-    populate: ["cover", "category"],
+    populate: ["cover", "category", "author", "author.avatar"],
+    sort,
     pagination: {
       page: options.page || 1,
       pageSize: options.pageSize || 9,

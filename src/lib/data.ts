@@ -197,7 +197,7 @@ export const navLinks = [
   { label: "Início", href: "/" },
   { label: "Benefícios", href: "/#beneficios" },
   { label: "Patrocinadores", href: "/#patrocinadores" },
-  { label: "Notícias", href: "/noticias" },
+  { label: "Últimas Notícias", href: "/#publicacoes" },
   { label: "Contato", href: "/#contato" },
 ];
 
