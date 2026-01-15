@@ -18,6 +18,7 @@ type NewsFiltersProps = {
   onSearchChange: (query: string) => void;
   onCategoryChange: (categorySlug: string | null) => void;
   onSortOrderChange: (order: SortOrder) => void;
+  onClearFilters: () => void;
   isLoading?: boolean;
 };
 
@@ -29,6 +30,7 @@ export function NewsFilters({
   onSearchChange,
   onCategoryChange,
   onSortOrderChange,
+  onClearFilters,
   isLoading,
 }: NewsFiltersProps) {
   const [inputValue, setInputValue] = useState(searchQuery);
@@ -51,10 +53,8 @@ export function NewsFilters({
 
   const handleClearFilters = useCallback(() => {
     setInputValue("");
-    onSearchChange("");
-    onCategoryChange(null);
-    onSortOrderChange("recent");
-  }, [onSearchChange, onCategoryChange, onSortOrderChange]);
+    onClearFilters();
+  }, [onClearFilters]);
 
   const hasActiveFilters =
     searchQuery || selectedCategory || sortOrder !== "recent";

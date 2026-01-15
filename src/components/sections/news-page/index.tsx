@@ -186,6 +186,10 @@ export function NewsPageContent() {
     [updateUrl]
   );
 
+  const handleClearFilters = useCallback(() => {
+    router.push("/noticias", { scroll: false });
+  }, [router]);
+
   const handlePageChange = useCallback(
     (page: number) => {
       updateUrl({ pagina: page });
@@ -229,6 +233,7 @@ export function NewsPageContent() {
             onSearchChange={handleSearchChange}
             onCategoryChange={handleCategoryChange}
             onSortOrderChange={handleSortOrderChange}
+            onClearFilters={handleClearFilters}
             isLoading={isLoading}
           />
         </div>
