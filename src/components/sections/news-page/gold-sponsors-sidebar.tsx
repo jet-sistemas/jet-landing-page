@@ -3,7 +3,6 @@
 import { Building2, Crown, ExternalLink } from "lucide-react";
 import Link from "next/link";
 
-import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { sponsors } from "@/lib/data";
 import { cn } from "@/lib/utils";
@@ -16,7 +15,7 @@ export function GoldSponsorsSidebar() {
   }
 
   return (
-    <aside className="rounded-xl border border-jet-gold/30 bg-jet-gold/5 p-6 backdrop-blur-sm">
+    <aside className="rounded-xl border border-jet-gold/60 bg-jet-gold/15 p-6 backdrop-blur-sm">
       {/* Header */}
       <div className="flex items-center gap-2 mb-6">
         <Crown className="size-5 text-jet-gold" />
@@ -61,8 +60,8 @@ export function GoldSponsorsSidebar() {
       </div>
 
       {/* CTA */}
-      <div className="mt-6 pt-6 border-t border-jet-gold/20">
-        <p className="text-center text-sm text-muted-foreground mb-3">
+      <div className="mt-6 pt-6 border-t border-jet-gold/60">
+        <p className="text-center font-semibold text-sm text-muted-foreground mb-3">
           Quer ser um patrocinador?
         </p>
         <Button
@@ -71,9 +70,7 @@ export function GoldSponsorsSidebar() {
           size="sm"
           className="w-full border-jet-gold/30 text-jet-gold hover:bg-jet-gold/10 hover:text-jet-gold"
         >
-          <Link href="/#pre-cadastro">
-            Seja um Parceiro
-          </Link>
+          <Link href="/#pre-cadastro">Seja um Parceiro</Link>
         </Button>
       </div>
     </aside>
@@ -135,9 +132,7 @@ export function GoldSponsorsCompact() {
           size="sm"
           className="border-jet-gold/30 text-jet-gold hover:bg-jet-gold/10"
         >
-          <Link href="/#pre-cadastro">
-            Seja um Patrocinador
-          </Link>
+          <Link href="/#pre-cadastro">Seja um Patrocinador</Link>
         </Button>
       </div>
     </section>

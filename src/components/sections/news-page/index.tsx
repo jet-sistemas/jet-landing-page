@@ -200,7 +200,7 @@ export function NewsPageContent() {
   );
 
   return (
-    <section className="relative overflow-hidden py-12 lg:py-16">
+    <section className="relative overflow-hidden py-12 lg:py-16 not-dark:bg-muted/80">
       {/* Background decoration */}
       <div className="absolute inset-0 overflow-hidden pointer-events-none">
         <div className="absolute -top-1/4 -right-1/4 size-[600px] rounded-full bg-secondary/5 blur-3xl" />
@@ -224,7 +224,7 @@ export function NewsPageContent() {
         </div>
 
         {/* Filters */}
-        <div className="mb-8 rounded-xl border border-border/50 bg-card/50 p-6 backdrop-blur-sm">
+        <div className="mb-8 rounded-xl border border-muted bg-card p-6 backdrop-blur-sm">
           <NewsFilters
             categories={categories}
             selectedCategory={selectedCategory}

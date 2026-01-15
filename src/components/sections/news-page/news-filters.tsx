@@ -71,7 +71,7 @@ export function NewsFilters({
             placeholder="Buscar notícias por título..."
             value={inputValue}
             onChange={(e) => setInputValue(e.target.value)}
-            className="pl-10 pr-10 h-12 bg-card border-border/50 focus:border-accent"
+            className="pl-10 pr-10 h-12 bg-card border-muted focus:border-accent"
             disabled={isLoading}
           />
           {inputValue && (
@@ -103,7 +103,7 @@ export function NewsFilters({
                 "flex items-center gap-1.5 px-3 py-2 text-sm transition-colors",
                 sortOrder === "recent"
                   ? "bg-accent text-accent-foreground"
-                  : "text-muted-foreground hover:text-foreground hover:bg-muted/50"
+                  : "bg-muted text-primary dark:text-white hover:text-foreground hover:bg-muted"
               )}
             >
               <Clock className="size-3.5" />
@@ -115,10 +115,10 @@ export function NewsFilters({
               onClick={() => onSortOrderChange("oldest")}
               disabled={isLoading}
               className={cn(
-                "flex items-center gap-1.5 px-3 py-2 text-sm transition-colors border-l border-border/50",
+                "flex items-center gap-1.5 px-3 py-2 text-sm transition-colors border-l border-muted",
                 sortOrder === "oldest"
                   ? "bg-accent text-accent-foreground"
-                  : "text-muted-foreground hover:text-foreground hover:bg-muted/50"
+                  : "bg-muted text-primary dark:text-white hover:text-foreground hover:bg-muted"
               )}
             >
               <History className="size-3.5" />
@@ -140,7 +140,7 @@ export function NewsFilters({
           <Badge
             variant={selectedCategory === null ? "default" : "outline"}
             className={cn(
-              "cursor-pointer transition-all hover:scale-105",
+              "cursor-pointer transition-all py-1 px-2 hover:scale-115",
               selectedCategory === null
                 ? "bg-accent text-accent-foreground"
                 : "hover:bg-accent/10"
@@ -157,7 +157,7 @@ export function NewsFilters({
                 selectedCategory === category.slug ? "default" : "outline"
               }
               className={cn(
-                "cursor-pointer transition-all hover:scale-105",
+                "cursor-pointer transition-all hover:scale-115",
                 selectedCategory === category.slug
                   ? "bg-accent text-accent-foreground"
                   : "hover:bg-accent/10"
@@ -185,8 +185,11 @@ export function NewsFilters({
                 {categories.find((c) => c.slug === selectedCategory)?.name}
               </span>
             )}
+            {selectedCategory && sortOrder === "oldest" && (
+              <span className="mx-1 text-muted-foreground">·</span>
+            )}
             {sortOrder === "oldest" && (
-              <span className="ml-2 font-medium text-secondary-foreground">
+              <span className="font-medium text-primary dark:text-white">
                 Mais antigas primeiro
               </span>
             )}
