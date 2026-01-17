@@ -19,7 +19,7 @@ export function GoldSponsorsSidebar() {
       {/* Header */}
       <div className="flex items-center gap-2 mb-6">
         <Crown className="size-5 text-jet-gold" />
-        <h3 className="font-serif text-lg font-semibold text-jet-gold">
+        <h3 className="font-serif text-xl font-semibold text-jet-gold">
           Patrocinadores Ouro
         </h3>
       </div>

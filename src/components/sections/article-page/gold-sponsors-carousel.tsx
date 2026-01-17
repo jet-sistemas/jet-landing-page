@@ -51,7 +51,7 @@ export function GoldSponsorsCarousel() {
       {/* Header */}
       <div className="flex items-center justify-center gap-2 mb-4">
         <Crown className="size-4 text-jet-gold" />
-        <h3 className="font-serif text-sm font-semibold text-jet-gold">
+        <h3 className="font-serif text-md font-semibold text-jet-gold">
           Patrocinador Ouro
         </h3>
       </div>

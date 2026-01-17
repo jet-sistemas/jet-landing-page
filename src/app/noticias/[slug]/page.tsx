@@ -72,7 +72,7 @@ export default async function ArticlePage({ params }: ArticlePageProps) {
   return (
     <>
       <Header />
-      <main className="min-h-screen pt-20 md:pt-24">
+      <main className="min-h-screen pt-17 md:pt-21">
         <ArticlePageContent
           article={article}
           relatedArticles={relatedArticles}

@@ -16,7 +16,7 @@ export function BlockQuote({ block }: BlockQuoteProps) {
         <Quote className="size-10 sm:size-12 text-accent/20 rotate-180" />
       </div>
 
-      <div className="relative rounded-xl border-l-4 border-accent bg-accent/5 p-6 sm:p-8 pl-8 sm:pl-12">
+      <div className="relative rounded-xl border-l-4 border-accent bg-accent/5 dark:bg-accent/15 p-6 sm:p-8 pl-8 sm:pl-12">
         {/* Title */}
         {block.title && (
           <p className="font-serif text-xl sm:text-2xl font-bold text-foreground leading-relaxed mb-4">

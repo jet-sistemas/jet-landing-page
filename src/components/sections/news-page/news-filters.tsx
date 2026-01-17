@@ -89,7 +89,7 @@ export function NewsFilters({
         </div>
 
         {/* Sort Order Toggle */}
-        <div className="flex items-center gap-2">
+        <div className="flex flex-wrap sm:flex-nowrap items-center gap-2">
           <span className="text-sm text-muted-foreground flex items-center gap-1">
             <ArrowUpDown className="size-4" />
             Ordenar:

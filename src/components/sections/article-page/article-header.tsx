@@ -58,9 +58,9 @@ export function ArticleHeader({ article }: ArticleHeaderProps) {
         <div className="absolute top-4 left-4 z-10">
           <Button
             asChild
-            variant="secondary"
+            variant="outline"
             size="sm"
-            className="backdrop-blur-sm bg-background/80 hover:bg-background"
+            className="backdrop-blur-sm"
           >
             <Link href="/noticias">
               <ArrowLeft className="mr-2 size-4" />
@@ -72,7 +72,7 @@ export function ArticleHeader({ article }: ArticleHeaderProps) {
         {/* Category badge */}
         {article.category?.name && (
           <div className="absolute top-4 right-4 z-10">
-            <Badge className="bg-accent text-accent-foreground backdrop-blur-sm font-semibold text-sm px-3 py-1">
+            <Badge variant="accent" className="backdrop-blur-sm font-semibold text-sm px-3 py-1">
               <Tag className="mr-1.5 size-3" />
               {article.category.name}
             </Badge>

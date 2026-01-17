@@ -69,7 +69,7 @@ export function ArticleBlocks({ blocks }: ArticleBlocksProps) {
   }
 
   return (
-    <div className="article-content">
+    <div id="article-content">
       {blocks.map((block) => renderBlock(block))}
     </div>
   );

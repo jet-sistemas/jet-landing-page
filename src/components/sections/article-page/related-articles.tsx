@@ -84,7 +84,7 @@ export function RelatedArticles({
                     {article.category?.name && (
                       <div className="absolute top-2 left-2">
                         <Badge
-                          variant="secondary"
+                          variant="outline"
                           className="bg-background/80 backdrop-blur-sm text-xs"
                         >
                           {article.category.name}
