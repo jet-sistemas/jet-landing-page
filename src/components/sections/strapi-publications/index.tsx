@@ -30,7 +30,6 @@ export function StrapiPublications() {
             page: 1,
           },
         });
-        console.log("🚀 ~ loadArticles ~ response:", result);
 
         if (result.data.length > 0) {
           setArticles(result.data);

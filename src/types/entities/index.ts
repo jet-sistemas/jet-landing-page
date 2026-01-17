@@ -92,3 +92,35 @@ export type Format = {
   sizeInBytes: number;
   url: string;
 };
+
+// Blocks do Article (Dynamic Zone do Strapi)
+export type MediaBlock = {
+  __component: "shared.media";
+  id: number;
+  file: Image;
+};
+
+export type QuoteBlock = {
+  __component: "shared.quote";
+  id: number;
+  title: string;
+  body: string;
+};
+
+export type RichTextBlock = {
+  __component: "shared.rich-text";
+  id: number;
+  body: string; // Markdown
+};
+
+export type SliderBlock = {
+  __component: "shared.slider";
+  id: number;
+  files: Image[];
+};
+
+export type ArticleBlock =
+  | MediaBlock
+  | QuoteBlock
+  | RichTextBlock
+  | SliderBlock;

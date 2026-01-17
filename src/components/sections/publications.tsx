@@ -131,7 +131,6 @@ type PublicationsGridProps = {
 
 function PublicationsGrid({ publications }: PublicationsGridProps) {
   const [featuredPublication, ...otherPublications] = publications;
-  console.log("🚀 ~ PublicationsGrid ~ publications:", publications);
 
   return (
     <div className="mt-12 grid gap-6 md:grid-cols-2 lg:grid-cols-4">

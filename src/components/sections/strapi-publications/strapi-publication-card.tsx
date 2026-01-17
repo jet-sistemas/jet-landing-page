@@ -24,8 +24,7 @@ export function StrapiPublicationCard({
 }: StrapiPublicationCardProps) {
   const imageUrl = getStrapiImageUrl(article?.cover?.formats.small.url);
   const slug = article?.slug || article.id.toString();
-  const description =
-    article?.description || article?.content?.substring(0, 150) || "";
+  const description = article?.description || "";
 
   return (
     <Card

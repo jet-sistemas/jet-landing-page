@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 
-import { Author, Category, Image } from "@/types/entities";
+import { ArticleBlock, Author, Category, Image } from "@/types/entities";
 
 /**
  * Estrutura padrão de resposta da API do Strapi v4
@@ -33,7 +33,7 @@ export type Article = {
   category?: Category;
   cover?: Image;
   author?: Author;
-  [key: string]: any; // Permite campos adicionais
+  blocks?: ArticleBlock[];
 };
 
 export type SortOrder = "recent" | "oldest";
@@ -76,6 +76,8 @@ export type StrapiArticle = Article;
 
 export type FetchStrapiOptions = {
   populate?: string | string[];
+  /** Campos que precisam de deep populate (ex: "blocks" -> populate[blocks][populate]=*) */
+  rawPopulate?: [string, string][];
   sort?: string | string[];
   pagination?: {
     page?: number;
@@ -98,7 +100,7 @@ export async function fetchStrapiContent<T = StrapiArticle>(
   const strapiUrl = process.env.NEXT_PUBLIC_STRAPI_URL;
   const url = new URL(`${strapiUrl}/api/${contentType}`);
 
-  // Populate
+  // Populate simples
   if (options.populate) {
     if (Array.isArray(options.populate)) {
       options.populate.forEach((field) => {
@@ -107,6 +109,12 @@ export async function fetchStrapiContent<T = StrapiArticle>(
     } else {
       url.searchParams.append("populate", options.populate);
     }
+  }
+
+  if (options.rawPopulate) {
+    options.rawPopulate.forEach(([query, value]) => {
+      url.searchParams.append(query, value);
+    });
   }
 
   // Sort
@@ -162,7 +170,7 @@ export async function fetchStrapiContent<T = StrapiArticle>(
   }
 
   const response = await fetch(url.toString(), {
-    next: { revalidate: 60 }, // Revalida a cada 1min
+    // next: { revalidate: 60 }, // Revalida a cada 1min
     headers: {
       "Content-Type": "application/json",
     },
@@ -179,13 +187,15 @@ export async function fetchStrapiContent<T = StrapiArticle>(
 /**
  * Busca artigos do Strapi com opções de filtro para busca, categoria e ordenação
  */
-export async function fetchArticles(options: {
-  page?: number;
-  pageSize?: number;
-  search?: string;
-  categorySlug?: string;
-  sortOrder?: SortOrder;
-} = {}): Promise<StrapiResponse<StrapiArticle>> {
+export async function fetchArticles(
+  options: {
+    page?: number;
+    pageSize?: number;
+    search?: string;
+    categorySlug?: string;
+    sortOrder?: SortOrder;
+  } = {}
+): Promise<StrapiResponse<StrapiArticle>> {
   const filters: StrapiFilter[] = [];
 
   if (options.search) {
@@ -244,4 +254,71 @@ export function getStrapiImageUrl(url?: string): string | null {
 
   // Caso contrário, adiciona a URL base do Strapi
   return `${strapiUrl}${url}`;
+}
+
+/**
+ * Busca um artigo pelo slug com populate profundo para blocks
+ */
+export async function fetchArticleBySlug(
+  slug: string
+): Promise<Article | null> {
+  const response = await fetchStrapiContent<StrapiArticle>("articles", {
+    rawPopulate: [
+      ["populate[category][populate]","*"],
+      ["populate[cover][populate]","*"],
+      ["populate[author][populate]","avatar"],
+      ["populate[blocks][on][shared.media][populate]","file"],
+      ["populate[blocks][on][shared.quote][populate]","*"],
+      ["populate[blocks][on][shared.rich-text][populate]","*"],
+      ["populate[blocks][on][shared.slider][populate]","files"],
+    ],
+    filters: [{ field: "slug", operator: "$eq", value: slug }],
+  });
+
+  return response.data?.[0] || null;
+}
+
+/**
+ * Busca artigos relacionados (mesma categoria, excluindo o atual)
+ */
+export async function fetchRelatedArticles(
+  categorySlug: string,
+  excludeSlug: string,
+  limit: number = 4
+): Promise<Article[]> {
+  const filters: StrapiFilter[] = [
+    { field: "category][slug", operator: "$eq", value: categorySlug },
+    { field: "slug", operator: "$ne", value: excludeSlug },
+  ];
+
+  const result = await fetchStrapiContent<Article>("articles", {
+    populate: ["cover", "category", "author"],
+    filters,
+    pagination: { limit },
+  });
+
+  return result.data || [];
+}
+
+/**
+ * Busca artigos mais recentes (para seção de "mais notícias")
+ */
+export async function fetchLatestArticles(
+  excludeSlug?: string,
+  limit: number = 4
+): Promise<Article[]> {
+  const filters: StrapiFilter[] = [];
+
+  if (excludeSlug) {
+    filters.push({ field: "slug", operator: "$ne", value: excludeSlug });
+  }
+
+  const result = await fetchStrapiContent<Article>("articles", {
+    populate: ["cover", "category", "author"],
+    filters,
+    pagination: { limit },
+    sort: "publishedAt:desc",
+  });
+
+  return result.data || [];
 }
