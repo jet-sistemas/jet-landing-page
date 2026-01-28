@@ -1,4 +1,11 @@
-import { ContentTypeEnum, StrapiMapper } from "@/mappers/StrapiMapper";
+import {
+  ArticleBlockTypeEnum,
+  ArticleEntityEnum,
+  ContentTypeEnum,
+  MediaBlockTypeEnum,
+  SliderBlockTypeEnum,
+  StrapiMapper,
+} from "@/mappers/StrapiMapper";
 import {
   Article,
   Category,
@@ -140,7 +147,7 @@ export async function fetchArticles(
 
   if (options.search) {
     filters.push({
-      field: "title",
+      field: ArticleEntityEnum.TITLE,
       operator: "$containsi",
       value: options.search,
     });
@@ -148,7 +155,7 @@ export async function fetchArticles(
 
   if (options.categorySlug) {
     filters.push({
-      field: "category][slug",
+      field: `${ArticleEntityEnum.CATEGORY}][slug`,
       operator: "$eq",
       value: options.categorySlug,
     });
@@ -159,7 +166,12 @@ export async function fetchArticles(
     options.sortOrder === "oldest" ? "publishedAt:asc" : "publishedAt:desc";
 
   return fetchStrapiContent<Article>(ContentTypeEnum.ARTICLES, {
-    populate: ["cover", "category", "author", "author.avatar"],
+    populate: [
+      ArticleEntityEnum.COVER,
+      ArticleEntityEnum.CATEGORY,
+      ArticleEntityEnum.AUTHOR,
+      ArticleEntityEnum.AUTHOR_AVATAR,
+    ],
     sort,
     pagination: {
       page: options.page || 1,
@@ -199,19 +211,40 @@ export function getStrapiImageUrl(url?: string): string | null {
 /**
  * Busca um artigo pelo slug com populate profundo para blocks
  */
+// ["populate[category][populate]", "*"],
+// ["populate[cover][populate]", "*"],
+// ["populate[author][populate]", "avatar"],
+// ["populate[blocks][on][shared.media][populate]", "file"],
+// ["populate[blocks][on][shared.quote][populate]", "*"],
+// ["populate[blocks][on][shared.rich-text][populate]", "*"],
+// ["populate[blocks][on][shared.slider][populate]", "files"],
 export async function fetchArticleBySlug(
   slug: string,
 ): Promise<Article | null> {
-  const response = await fetchStrapiContent<Article>(ContentTypeEnum.ARTICLES, {
-    rawPopulate: [
-      ["populate[category][populate]", "*"],
-      ["populate[cover][populate]", "*"],
-      ["populate[author][populate]", "avatar"],
-      ["populate[blocks][on][shared.media][populate]", "file"],
-      ["populate[blocks][on][shared.quote][populate]", "*"],
-      ["populate[blocks][on][shared.rich-text][populate]", "*"],
-      ["populate[blocks][on][shared.slider][populate]", "files"],
+  const populateAllArticleFields = [
+    [`populate[${ArticleEntityEnum.CATEGORY}][populate]`, "*"],
+    [`populate[${ArticleEntityEnum.COVER}][populate]`, "*"],
+    [`populate[${ArticleEntityEnum.AUTHOR}][populate]`, "avatar"],
+    [
+      `populate[${ArticleEntityEnum.BLOCKS}][on][${ArticleBlockTypeEnum.MEDIA}][populate]`,
+      MediaBlockTypeEnum.FILE,
     ],
+    [
+      `populate[${ArticleEntityEnum.BLOCKS}][on][${ArticleBlockTypeEnum.QUOTE}][populate]`,
+      "*",
+    ],
+    [
+      `populate[${ArticleEntityEnum.BLOCKS}][on][${ArticleBlockTypeEnum.RICH_TEXT}][populate]`,
+      "*",
+    ],
+    [
+      `populate[${ArticleEntityEnum.BLOCKS}][on][${ArticleBlockTypeEnum.SLIDER}][populate]`,
+      SliderBlockTypeEnum.FILES,
+    ],
+  ] as [string, string][];
+
+  const response = await fetchStrapiContent<Article>(ContentTypeEnum.ARTICLES, {
+    rawPopulate: populateAllArticleFields,
     filters: [{ field: "slug", operator: "$eq", value: slug }],
   });
 
@@ -227,12 +260,20 @@ export async function fetchRelatedArticles(
   limit: number = 4,
 ): Promise<Article[]> {
   const filters: StrapiFilter[] = [
-    { field: "category][slug", operator: "$eq", value: categorySlug },
+    {
+      field: `${ArticleEntityEnum.CATEGORY}][slug`,
+      operator: "$eq",
+      value: categorySlug,
+    },
     { field: "slug", operator: "$ne", value: excludeSlug },
   ];
 
   const result = await fetchStrapiContent<Article>(ContentTypeEnum.ARTICLES, {
-    populate: ["cover", "category", "author"],
+    populate: [
+      ArticleEntityEnum.COVER,
+      ArticleEntityEnum.CATEGORY,
+      ArticleEntityEnum.AUTHOR,
+    ],
     filters,
     pagination: { limit },
   });
@@ -254,7 +295,11 @@ export async function fetchLatestArticles(
   }
 
   const result = await fetchStrapiContent<Article>(ContentTypeEnum.ARTICLES, {
-    populate: ["cover", "category", "author"],
+    populate: [
+      ArticleEntityEnum.COVER,
+      ArticleEntityEnum.CATEGORY,
+      ArticleEntityEnum.AUTHOR,
+    ],
     filters,
     pagination: { limit },
     sort: "publishedAt:desc",

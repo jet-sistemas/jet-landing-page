@@ -18,9 +18,12 @@ export enum ContentTypeEnum {
 }
 
 export enum ArticleEntityEnum {
+  TITLE = "titulo",
+  DESCRIPTION = "descricao",
   COVER = "cover",
   CATEGORY = "categoria",
   AUTHOR = "autor",
+  AUTHOR_AVATAR = "autor.avatar",
   BLOCKS = "blocos",
 }
 
@@ -28,7 +31,24 @@ export enum ArticleBlockTypeEnum {
   MEDIA = "compartilhado.midia",
   QUOTE = "compartilhado.citacao",
   RICH_TEXT = "compartilhado.texto-rico",
-  SLIDER = "compartilhado.carrossel",
+  SLIDER = "compartilhado.carrosel",
+}
+
+export enum MediaBlockTypeEnum {
+  FILE = "arquivo",
+}
+
+export enum QuoteBlockTypeEnum {
+  TITLE = "titulo",
+  BODY = "corpo",
+}
+
+export enum RichTextBlockTypeEnum {
+  BODY = "corpo",
+}
+
+export enum SliderBlockTypeEnum {
+  FILES = "arquivos",
 }
 
 type Categoria = {
