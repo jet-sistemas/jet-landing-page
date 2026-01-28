@@ -1,10 +1,9 @@
 "use client";
 
-import { Article } from "@/lib/strapi";
-
 import { ArticleHeader } from "./article-header";
 import { ArticleBlocks } from "./article-blocks";
 import { RelatedArticles } from "./related-articles";
+import { Article } from "@/types/entities";
 
 type ArticlePageContentProps = {
   article: Article;
@@ -34,7 +33,9 @@ export function ArticlePageContent({
             <ArticleBlocks blocks={article.blocks} />
           ) : (
             <div className="text-center py-12 text-muted-foreground">
-              <p className="text-lg">Este artigo não possui conteúdo adicional.</p>
+              <p className="text-lg">
+                Este artigo não possui conteúdo adicional.
+              </p>
             </div>
           )}
         </div>

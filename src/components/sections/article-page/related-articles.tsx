@@ -6,8 +6,9 @@ import Link from "next/link";
 
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Article, getStrapiImageUrl } from "@/lib/strapi";
+import { getStrapiImageUrl } from "@/lib/strapi";
 import { formatDate } from "@/lib/utils";
+import { Article } from "@/types/entities";
 
 type RelatedArticlesProps = {
   articles: Article[];
@@ -52,7 +53,7 @@ export function RelatedArticles({
             const coverUrl = getStrapiImageUrl(
               article.cover?.formats?.medium?.url ||
                 article.cover?.formats?.small?.url ||
-                article.cover?.url
+                article.cover?.url,
             );
             const slug =
               article.slug || article.documentId || article.id?.toString();

@@ -6,10 +6,11 @@ import Link from "next/link";
 
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Article, getStrapiImageUrl } from "@/lib/strapi";
+import { getStrapiImageUrl } from "@/lib/strapi";
 import { formatDate } from "@/lib/utils";
 
 import { GoldSponsorsCarousel } from "./gold-sponsors-carousel";
+import { Article } from "@/types/entities";
 
 type ArticleHeaderProps = {
   article: Article;
@@ -19,12 +20,12 @@ export function ArticleHeader({ article }: ArticleHeaderProps) {
   const coverUrl = getStrapiImageUrl(
     article?.cover?.formats?.large?.url ||
       article?.cover?.formats?.medium?.url ||
-      article?.cover?.url
+      article?.cover?.url,
   );
 
   const authorAvatarUrl = getStrapiImageUrl(
     article?.author?.avatar?.formats?.thumbnail?.url ||
-      article?.author?.avatar?.url
+      article?.author?.avatar?.url,
   );
 
   return (
@@ -72,7 +73,10 @@ export function ArticleHeader({ article }: ArticleHeaderProps) {
         {/* Category badge */}
         {article.category?.name && (
           <div className="absolute top-4 right-4 z-10">
-            <Badge variant="accent" className="backdrop-blur-sm font-semibold text-sm px-3 py-1">
+            <Badge
+              variant="accent"
+              className="backdrop-blur-sm font-semibold text-sm px-3 py-1"
+            >
               <Tag className="mr-1.5 size-3" />
               {article.category.name}
             </Badge>

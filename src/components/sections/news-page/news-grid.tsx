@@ -1,11 +1,11 @@
 "use client";
 
-import { StrapiArticle } from "@/lib/strapi";
+import { Article } from "@/types/entities";
 import { StrapiPublicationCard } from "../strapi-publications/strapi-publication-card";
 import { FileX, Loader2 } from "lucide-react";
 
 type NewsGridProps = {
-  articles: StrapiArticle[];
+  articles: Article[];
   isLoading?: boolean;
 };
 

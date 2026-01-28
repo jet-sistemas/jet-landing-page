@@ -6,14 +6,15 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { getStrapiImageUrl, StrapiArticle } from "@/lib/strapi";
+import { getStrapiImageUrl } from "@/lib/strapi";
 import { cn, formatDate } from "@/lib/utils";
+import { Article } from "@/types/entities";
 import { ArrowRight, Calendar, ImageIcon } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 
 type StrapiPublicationCardProps = {
-  article: StrapiArticle;
+  article: Article;
   featured?: boolean;
   strapiUrl?: string;
 };
@@ -31,7 +32,7 @@ export function StrapiPublicationCard({
       className={cn(
         "hover:cursor-pointer",
         "group overflow-hidden border-border/50 bg-card/80 transition-all hover:border-accent/30 hover:shadow-lg",
-        featured && "lg:col-span-2 lg:row-span-1 pt-0"
+        featured && "lg:col-span-2 lg:row-span-1 pt-0",
       )}
     >
       {featured && (
@@ -42,7 +43,7 @@ export function StrapiPublicationCard({
       <div
         className={cn(
           "relative overflow-hidden bg-muted",
-          featured ? "h-64" : "h-48"
+          featured ? "h-64" : "h-48",
         )}
       >
         {imageUrl ? (
@@ -88,7 +89,7 @@ export function StrapiPublicationCard({
         <CardTitle
           className={cn(
             "line-clamp-2 font-serif transition-colors group-hover:text-accent",
-            featured ? "text-2xl" : "text-lg"
+            featured ? "text-2xl" : "text-lg",
           )}
         >
           {article?.title}

@@ -124,3 +124,67 @@ export type ArticleBlock =
   | QuoteBlock
   | RichTextBlock
   | SliderBlock;
+
+/**
+ * Estrutura padrão de um item de dados do Strapi
+ */
+export type Article = {
+  id: number;
+  documentId: string;
+  title: string;
+  description?: string;
+  slug?: string;
+  publishedAt: string;
+  createdAt: string;
+  updatedAt: string;
+  category?: Category;
+  cover?: Image;
+  author?: Author;
+  blocks?: ArticleBlock[];
+};
+
+/**
+ * Operadores de filtro do Strapi
+ */
+export type StrapiFilterOperator =
+  | "$eq"
+  | "$eqi"
+  | "$ne"
+  | "$nei"
+  | "$lt"
+  | "$lte"
+  | "$gt"
+  | "$gte"
+  | "$in"
+  | "$notIn"
+  | "$contains"
+  | "$notContains"
+  | "$containsi"
+  | "$notContainsi"
+  | "$null"
+  | "$notNull"
+  | "$between"
+  | "$startsWith"
+  | "$startsWithi"
+  | "$endsWith"
+  | "$endsWithi";
+
+export type StrapiFilter = {
+  field: string;
+  operator: StrapiFilterOperator;
+  value: string | string[];
+};
+
+export type FetchStrapiOptions = {
+  populate?: string | string[];
+  /** Campos que precisam de deep populate (ex: "blocks" -> populate[blocks][populate]=*) */
+  rawPopulate?: [string, string][];
+  sort?: string | string[];
+  pagination?: {
+    page?: number;
+    pageSize?: number;
+    limit?: number;
+    start?: number;
+  };
+  filters?: StrapiFilter[];
+};

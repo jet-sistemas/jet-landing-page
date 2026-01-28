@@ -6,14 +6,16 @@ import { useEffect, useState } from "react";
 
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { fetchStrapiContent, StrapiArticle } from "@/lib/strapi";
+import { fetchStrapiContent } from "@/lib/strapi";
 import { StrapiPublicationsGrid } from "./strapi-publication-grid";
 import { EmptyStrapiPublications } from "./empty-strapi-publication";
 import { LoadingStrapiPublications } from "./loading-strapi-publication";
 import { ErrorStrapiPublications } from "./error-strapi-publication";
+import { Article } from "@/types/entities";
+import { ContentTypeEnum } from "@/mappers/StrapiMapper";
 
 export function StrapiPublications() {
-  const [articles, setArticles] = useState<StrapiArticle[]>([]);
+  const [articles, setArticles] = useState<Article[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
@@ -23,13 +25,16 @@ export function StrapiPublications() {
         setIsLoading(true);
         setError(null);
 
-        const result = await fetchStrapiContent("articles", {
-          populate: ["cover"],
-          pagination: {
-            pageSize: 7,
-            page: 1,
+        const result = await fetchStrapiContent<Article>(
+          ContentTypeEnum.ARTICLES,
+          {
+            populate: ["cover"],
+            pagination: {
+              pageSize: 7,
+              page: 1,
+            },
           },
-        });
+        );
 
         if (result.data.length > 0) {
           setArticles(result.data);
@@ -38,7 +43,7 @@ export function StrapiPublications() {
         }
       } catch (err) {
         setError(
-          "Erro ao conectar com o Strapi. Verifique se o servidor está rodando."
+          "Erro ao conectar com o Strapi. Verifique se o servidor está rodando.",
         );
       } finally {
         setIsLoading(false);

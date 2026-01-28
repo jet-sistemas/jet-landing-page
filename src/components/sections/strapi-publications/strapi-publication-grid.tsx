@@ -1,8 +1,8 @@
-import { StrapiArticle } from "@/lib/strapi";
+import { Article } from "@/types/entities";
 import { StrapiPublicationCard } from "./strapi-publication-card";
 
 type StrapiPublicationsGridProps = {
-  articles: StrapiArticle[];
+  articles: Article[];
 };
 
 export function StrapiPublicationsGrid({

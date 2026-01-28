@@ -5,22 +5,23 @@ import Image from "next/image";
 import Link from "next/link";
 
 import { Badge } from "@/components/ui/badge";
-import { getStrapiImageUrl, StrapiArticle } from "@/lib/strapi";
+import { getStrapiImageUrl } from "@/lib/strapi";
 import { formatDate } from "@/lib/utils";
+import { Article } from "@/types/entities";
 
 type FeaturedArticleProps = {
-  article: StrapiArticle;
+  article: Article;
 };
 
 export function FeaturedArticle({ article }: FeaturedArticleProps) {
   const coverUrl = getStrapiImageUrl(
     article?.cover?.formats?.large?.url ||
       article?.cover?.formats?.medium?.url ||
-      article?.cover?.url
+      article?.cover?.url,
   );
   const authorAvatarUrl = getStrapiImageUrl(
     article?.author?.avatar?.formats?.thumbnail?.url ||
-      article?.author?.avatar?.url
+      article?.author?.avatar?.url,
   );
   const slug = article?.slug || article?.documentId || article?.id?.toString();
   const description = article?.description || "";

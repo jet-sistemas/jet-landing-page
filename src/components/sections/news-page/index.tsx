@@ -5,13 +5,8 @@ import { useRouter, useSearchParams } from "next/navigation";
 import { Newspaper } from "lucide-react";
 
 import { Badge } from "@/components/ui/badge";
-import {
-  fetchArticles,
-  fetchCategories,
-  SortOrder,
-  StrapiArticle,
-} from "@/lib/strapi";
-import { Category } from "@/types/entities";
+import { fetchArticles, fetchCategories, SortOrder } from "@/lib/strapi";
+import { Article, Category } from "@/types/entities";
 
 import { NewsFilters } from "./news-filters";
 import { NewsGrid } from "./news-grid";
@@ -29,7 +24,7 @@ export function NewsPageContent() {
   const searchParams = useSearchParams();
 
   // State
-  const [articles, setArticles] = useState<StrapiArticle[]>([]);
+  const [articles, setArticles] = useState<Article[]>([]);
   const [categories, setCategories] = useState<Category[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -47,7 +42,10 @@ export function NewsPageContent() {
 
   // Determine if any filter is active
   const hasActiveFilters = Boolean(
-    searchQuery || selectedCategory || sortOrder !== "recent" || currentPage > 1
+    searchQuery ||
+    selectedCategory ||
+    sortOrder !== "recent" ||
+    currentPage > 1,
   );
 
   // Featured article is the first one when no filters are active
@@ -111,7 +109,7 @@ export function NewsPageContent() {
         scroll: false,
       });
     },
-    [router, searchParams]
+    [router, searchParams],
   );
 
   // Load categories on mount
@@ -169,21 +167,21 @@ export function NewsPageContent() {
     (query: string) => {
       updateUrl({ q: query, pagina: 1 });
     },
-    [updateUrl]
+    [updateUrl],
   );
 
   const handleCategoryChange = useCallback(
     (categorySlug: string | null) => {
       updateUrl({ categoria: categorySlug, pagina: 1 });
     },
-    [updateUrl]
+    [updateUrl],
   );
 
   const handleSortOrderChange = useCallback(
     (order: SortOrder) => {
       updateUrl({ ordem: order, pagina: 1 });
     },
-    [updateUrl]
+    [updateUrl],
   );
 
   const handleClearFilters = useCallback(() => {
@@ -196,7 +194,7 @@ export function NewsPageContent() {
       // Scroll to top
       window.scrollTo({ top: 0, behavior: "smooth" });
     },
-    [updateUrl]
+    [updateUrl],
   );
 
   return (
