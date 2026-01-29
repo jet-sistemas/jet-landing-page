@@ -1,21 +1,14 @@
+import { Benefit, Publication, Sponsor } from "@/types/entities";
 import {
+  Calendar,
+  Eye,
+  Gift,
+  Medal,
+  Share2,
+  Star,
   Trophy,
   Users,
-  Calendar,
-  Gift,
-  Eye,
-  Share2,
-  Medal,
-  Star,
-  type LucideIcon,
 } from "lucide-react";
-
-// Benefícios para Associados
-export interface Benefit {
-  icon: LucideIcon;
-  title: string;
-  description: string;
-}
 
 export const associateBenefits: Benefit[] = [
   {
@@ -69,17 +62,6 @@ export const sponsorBenefits: Benefit[] = [
   },
 ];
 
-// Patrocinadores mockados
-export type SponsorTier = "gold" | "silver" | "bronze";
-
-export interface Sponsor {
-  id: string;
-  name: string;
-  logo: string;
-  tier: SponsorTier;
-  website?: string;
-}
-
 export const sponsors: Sponsor[] = [
   {
     id: "1",
@@ -126,17 +108,6 @@ export const sponsors: Sponsor[] = [
     tier: "bronze",
   },
 ];
-
-// Publicações mockadas (simulando Strapi)
-export interface Publication {
-  id: string;
-  title: string;
-  excerpt: string;
-  coverImage: string;
-  publishedAt: string;
-  slug: string;
-  category: string;
-}
 
 export const publications: Publication[] = [
   // {
@@ -223,11 +194,11 @@ export const contactInfo = {
 
 // Links de navegação
 export const navLinks = [
-  { label: "Início", href: "#inicio" },
-  { label: "Benefícios", href: "#beneficios" },
-  { label: "Patrocinadores", href: "#patrocinadores" },
-  { label: "Publicações", href: "#publicacoes" },
-  { label: "Contato", href: "#contato" },
+  { label: "Início", href: "/" },
+  { label: "Benefícios", href: "/#beneficios" },
+  { label: "Patrocinadores", href: "/#patrocinadores" },
+  { label: "Últimas Notícias", href: "/#publicacoes" },
+  { label: "Contato", href: "/#contato" },
 ];
 
 // Valor da mensalidade
