@@ -16,6 +16,12 @@ const nextConfig: NextConfig = {
         port: "1337",
         pathname: "/uploads/**",
       },
+      {
+        protocol: "https",
+        hostname: "admin-noticias-dev.associacaojet.com.br",
+        port: "1337",
+        pathname: "/uploads/**",
+      },
       // Se você tiver um Strapi em produção, adicione também:
       // {
       //   protocol: "https",
