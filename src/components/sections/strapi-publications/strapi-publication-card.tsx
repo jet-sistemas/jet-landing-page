@@ -23,7 +23,10 @@ export function StrapiPublicationCard({
   article,
   featured = false,
 }: StrapiPublicationCardProps) {
-  const imageUrl = getStrapiImageUrl(article?.cover?.formats?.small?.url);
+  const imageUrl = getStrapiImageUrl(
+    article?.cover?.formats?.small?.url ??
+      article?.cover?.formats?.thumbnail?.url,
+  );
   const slug = article?.slug || article.id.toString();
   const description = article?.description || "";
 
