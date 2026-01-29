@@ -197,7 +197,7 @@ export async function fetchCategories(): Promise<StrapiResponse<Category>> {
 /**
  * Helper para construir URL de imagens do Strapi
  */
-export function getStrapiImageUrl(url?: string): string | null {
+export function getStrapiImageUrl(url: string | undefined): string | null {
   const strapiUrl = process.env.NEXT_PUBLIC_STRAPI_URL;
 
   if (!url) return null;
