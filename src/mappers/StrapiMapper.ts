@@ -27,6 +27,12 @@ export enum ArticleEntityEnum {
   BLOCKS = "blocos",
 }
 
+export enum CategoryEntityEnum {
+  NAME = "nome",
+  DESCRIPTION = "descricao",
+  SLUG = "slug",
+}
+
 export enum ArticleBlockTypeEnum {
   MEDIA = "compartilhado.midia",
   QUOTE = "compartilhado.citacao",

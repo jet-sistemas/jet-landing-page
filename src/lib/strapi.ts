@@ -1,6 +1,7 @@
 import {
   ArticleBlockTypeEnum,
   ArticleEntityEnum,
+  CategoryEntityEnum,
   ContentTypeEnum,
   MediaBlockTypeEnum,
   SliderBlockTypeEnum,
@@ -186,9 +187,9 @@ export async function fetchArticles(
  */
 export async function fetchCategories(): Promise<StrapiResponse<Category>> {
   return fetchStrapiContent<Category>(ContentTypeEnum.CATEGORIES, {
-    sort: "name:asc",
+    sort: `${CategoryEntityEnum.NAME}:asc`,
     pagination: {
-      pageSize: 100,
+      pageSize: 10,
     },
   });
 }
