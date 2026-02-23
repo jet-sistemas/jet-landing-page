@@ -1,10 +1,11 @@
+import { ArrowRight, Award, Building2, Crown, Medal } from "lucide-react";
 import Link from "next/link";
-import { Crown, Medal, Award, ArrowRight, Building2 } from "lucide-react";
 
-import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { sponsors, type Sponsor, type SponsorTier } from "@/lib/data";
+import { Button } from "@/components/ui/button";
+import { sponsors } from "@/lib/data";
 import { cn } from "@/lib/utils";
+import { Sponsor, SponsorTier } from "@/types/entities";
 
 const tierConfig: Record<
   SponsorTier,
