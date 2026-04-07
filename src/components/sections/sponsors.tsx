@@ -184,7 +184,7 @@ export async function Sponsors() {
             Quer ver sua empresa aqui?
           </p>
           <Button asChild variant="outline" size="lg" className="group">
-            <Link href="#pre-cadastro">
+            <Link href="/#pre-cadastro">
               Torne-se um Patrocinador
               <ArrowRight className="size-4 transition-transform group-hover:translate-x-1" />
             </Link>
@@ -262,7 +262,7 @@ export async function Sponsors() {
           Quer ver sua empresa aqui?
         </p>
         <Button asChild variant="outline" size="lg" className="group">
-          <Link href="#pre-cadastro">
+          <Link href="/#pre-cadastro">
             Torne-se um Patrocinador
             <ArrowRight className="size-4 transition-transform group-hover:translate-x-1" />
           </Link>

@@ -6,7 +6,7 @@ const DEFAULT_API_BASE = "http://localhost:8080";
 const DEFAULT_R2_PUBLIC_BASE =
   "https://pub-134d43c3b2494394b518c46b052650ee.r2.dev";
 
-type ApiTier = "GOLD" | "SILVER" | "BRONZE";
+export type PublicSponsorApiTier = "GOLD" | "SILVER" | "BRONZE";
 
 type RawPublicSponsorUser = {
   id?: number;
@@ -29,6 +29,13 @@ type RawEnvelope = {
   data?: unknown;
 };
 
+type RawListEnvelope = RawEnvelope & {
+  currentPage?: number;
+  totalPages?: number;
+  pageSize?: number;
+  totalElements?: number;
+};
+
 export type PublicSponsorCard = {
   id: string;
   publicName: string;
@@ -43,6 +50,14 @@ export type SponsorsByTier = {
   gold: PublicSponsorCard[];
   silver: PublicSponsorCard[];
   bronze: PublicSponsorCard[];
+};
+
+export type PublicSponsorPage = {
+  items: PublicSponsorCard[];
+  currentPage: number;
+  totalPages: number;
+  totalElements: number;
+  pageSize: number;
 };
 
 function getApiBase(): string {
@@ -84,7 +99,10 @@ function mapApiTierToUi(tier: string | undefined): SponsorTier {
   }
 }
 
-function parseItem(item: unknown, requestTier: ApiTier): PublicSponsorCard | null {
+function parseItem(
+  item: unknown,
+  requestTier: PublicSponsorApiTier
+): PublicSponsorCard | null {
   const row = item as { user?: RawPublicSponsorUser };
   const user = row.user;
   const sponsor = user?.sponsor;
@@ -96,9 +114,7 @@ function parseItem(item: unknown, requestTier: ApiTier): PublicSponsorCard | nul
   return {
     id: String(id),
     publicName:
-      sponsor.publicName?.trim() ||
-      user.name?.trim() ||
-      "Patrocinador",
+      sponsor.publicName?.trim() || user.name?.trim() || "Patrocinador",
     tier: mapApiTierToUi(sponsor.tier ?? requestTier),
     logoUrl: resolveSponsorLogoUrl(sponsor.logoUrl),
     site: sponsor.site?.trim() || null,
@@ -107,21 +123,48 @@ function parseItem(item: unknown, requestTier: ApiTier): PublicSponsorCard | nul
   };
 }
 
-async function fetchSponsorsForTier(tier: ApiTier): Promise<PublicSponsorCard[]> {
+function parseListItems(
+  data: unknown,
+  tier: PublicSponsorApiTier
+): PublicSponsorCard[] {
+  if (!Array.isArray(data)) {
+    throw new Error("Lista de patrocinadores inválida");
+  }
+  const items = data
+    .map((row) => parseItem(row, tier))
+    .filter((x): x is PublicSponsorCard => x != null);
+  items.sort(
+    (a, b) =>
+      new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
+  );
+  return items;
+}
+
+/**
+ * Listagem paginada de patrocinadores públicos (para client ou server).
+ */
+export async function fetchPublicSponsorsPage(
+  tier: PublicSponsorApiTier,
+  page: number,
+  size: number,
+  init?: RequestInit
+): Promise<PublicSponsorPage> {
   const base = getApiBase();
   const url = new URL(`${base}/v1/public/sponsors`);
   url.searchParams.set("tier", tier);
-  url.searchParams.set("page", "1");
-  url.searchParams.set("size", "10");
+  url.searchParams.set("page", String(page));
+  url.searchParams.set("size", String(size));
 
-  const res = await fetch(url.toString(), { cache: "no-store" });
+  const fetchInit: RequestInit = { cache: "no-store", ...init };
+
+  const res = await fetch(url.toString(), fetchInit);
   if (!res.ok) {
     throw new Error(`Backoffice sponsors HTTP ${res.status}`);
   }
 
-  let json: RawEnvelope;
+  let json: RawListEnvelope;
   try {
-    json = (await res.json()) as RawEnvelope;
+    json = (await res.json()) as RawListEnvelope;
   } catch {
     throw new Error("Resposta de patrocinadores inválida");
   }
@@ -130,21 +173,64 @@ async function fetchSponsorsForTier(tier: ApiTier): Promise<PublicSponsorCard[]>
     throw new Error(json.message || "Erro ao listar patrocinadores");
   }
 
-  const data = json.data;
-  if (!Array.isArray(data)) {
-    throw new Error("Lista de patrocinadores inválida");
+  let items = parseListItems(json.data, tier);
+  const pageSize = json.pageSize ?? size;
+  items = items.slice(0, pageSize);
+
+  const totalElements =
+    json.totalElements != null ? Number(json.totalElements) : items.length;
+
+  let totalPages =
+    json.totalPages != null ? Math.max(1, Number(json.totalPages)) : null;
+  if (totalPages == null && pageSize > 0) {
+    totalPages = Math.max(1, Math.ceil(totalElements / pageSize));
   }
+  totalPages = totalPages ?? 1;
 
-  const items = data
-    .map((row) => parseItem(row, tier))
-    .filter((x): x is PublicSponsorCard => x != null);
+  const currentPage =
+    json.currentPage != null ? Number(json.currentPage) : page;
 
-  items.sort(
+  return {
+    items,
+    currentPage,
+    totalPages,
+    totalElements,
+    pageSize,
+  };
+}
+
+const FETCH_ALL_PAGE_SIZE = 50;
+
+/**
+ * Agrega todas as páginas de patrocinadores públicos do tier (ex.: todos os ouro).
+ */
+export async function fetchAllPublicSponsorsForTier(
+  tier: PublicSponsorApiTier,
+  init?: RequestInit
+): Promise<PublicSponsorCard[]> {
+  const first = await fetchPublicSponsorsPage(tier, 1, FETCH_ALL_PAGE_SIZE, init);
+  const byId = new Map<string, PublicSponsorCard>();
+  for (const item of first.items) {
+    byId.set(item.id, item);
+  }
+  const totalPages = first.totalPages;
+  for (let page = 2; page <= totalPages; page++) {
+    const r = await fetchPublicSponsorsPage(tier, page, FETCH_ALL_PAGE_SIZE, init);
+    for (const item of r.items) {
+      byId.set(item.id, item);
+    }
+  }
+  return Array.from(byId.values()).sort(
     (a, b) =>
       new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
   );
+}
 
-  return items.slice(0, 10);
+async function fetchSponsorsForTier(
+  tier: PublicSponsorApiTier
+): Promise<PublicSponsorCard[]> {
+  const { items } = await fetchPublicSponsorsPage(tier, 1, 10);
+  return items;
 }
 
 export async function fetchPublicSponsorsByTier(): Promise<SponsorsByTier> {
