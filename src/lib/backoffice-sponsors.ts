@@ -2,10 +2,6 @@ import type { SponsorTier } from "@/types/entities";
 
 const DEFAULT_API_BASE = "http://localhost:8080";
 
-/** Base pública do R2 (Public Development URL ou CDN) — sem barra final. */
-const DEFAULT_R2_PUBLIC_BASE =
-  "https://pub-134d43c3b2494394b518c46b052650ee.r2.dev";
-
 export type PublicSponsorApiTier = "GOLD" | "SILVER" | "BRONZE";
 
 type RawPublicSponsorUser = {
@@ -68,8 +64,8 @@ function getApiBase(): string {
 
 function getR2PublicBase(): string {
   const raw =
-    process.env.NEXT_PUBLIC_R2_PUBLIC_URL?.trim() || DEFAULT_R2_PUBLIC_BASE;
-  return raw.replace(/\/$/, "");
+    process.env.NEXT_PUBLIC_R2_PUBLIC_URL?.trim();
+  return raw?.replace(/\/$/, "") ?? "";
 }
 
 /**
