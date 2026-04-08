@@ -1,11 +1,19 @@
-import { ArrowRight, Award, Building2, Crown, Medal } from "lucide-react";
+import { ArrowRight, Award, Crown, Medal } from "lucide-react";
 import Link from "next/link";
+import type { ReactNode } from "react";
 
+import { SponsorLogo } from "@/components/sections/sponsor-logo";
+import { SponsorsError } from "@/components/sections/sponsors-error";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { sponsors } from "@/lib/data";
+import {
+  fetchPublicSponsorsByTier,
+  publicInstagramHref,
+  publicSiteHref,
+  type PublicSponsorCard,
+} from "@/lib/backoffice-sponsors";
 import { cn } from "@/lib/utils";
-import { Sponsor, SponsorTier } from "@/types/entities";
+import type { SponsorTier } from "@/types/entities";
 
 const tierConfig: Record<
   SponsorTier,
@@ -48,9 +56,13 @@ const tierConfig: Record<
   },
 };
 
-function SponsorCard({ sponsor }: { sponsor: Sponsor }) {
+function SponsorCard({ sponsor }: { sponsor: PublicSponsorCard }) {
   const tier = tierConfig[sponsor.tier];
   const TierIcon = tier.icon;
+  const siteUrl = sponsor.site ? publicSiteHref(sponsor.site) : "";
+  const instagramUrl = sponsor.instagram
+    ? publicInstagramHref(sponsor.instagram)
+    : "";
 
   return (
     <div
@@ -60,63 +72,102 @@ function SponsorCard({ sponsor }: { sponsor: Sponsor }) {
         tier.bgColor
       )}
     >
-      {/* Tier badge */}
       <div
         className={cn(
-          "absolute -top-3 left-1/2 -translate-x-1/2 flex items-center gap-1 rounded-full px-3 py-1 text-xs font-medium",
+          "absolute -top-3 left-1/2 flex -translate-x-1/2 items-center gap-1 rounded-full px-3 py-1 text-xs font-medium",
           tier.bgBadgeColor,
           tier.textBadgeColor
-          // "border",
-          // tier.borderColor
         )}
       >
         <TierIcon className="size-3" />
         {tier.label}
       </div>
 
-      {/* Logo placeholder */}
-      <div className="flex size-24 items-center justify-center rounded-lg bg-background/80 p-4 shadow-sm transition-transform group-hover:scale-105">
-        <Building2 className={cn("size-12", tier.color)} />
+      <div className="flex size-24 items-center justify-center overflow-hidden rounded-lg bg-background/80 shadow-sm transition-transform group-hover:scale-105">
+        <SponsorLogo
+          src={sponsor.logoUrl}
+          alt={sponsor.publicName}
+          tierColorClass={tier.color}
+        />
       </div>
 
-      {/* Name */}
       <h4 className="mt-4 text-center font-medium text-foreground">
-        {sponsor.name}
+        {sponsor.publicName}
       </h4>
 
-      {/* Website link */}
-      {sponsor.website && (
-        <a
-          href={sponsor.website}
-          target="_blank"
-          rel="noopener noreferrer"
-          className="mt-2 text-xs text-muted-foreground hover:text-foreground hover:underline"
-        >
-          Visitar site →
-        </a>
-      )}
+      <div className="mt-2 flex flex-wrap items-center justify-center gap-y-1 text-xs">
+        {siteUrl ? (
+          <a
+            href={siteUrl}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="text-muted-foreground hover:text-foreground hover:underline"
+          >
+            Site
+          </a>
+        ) : null}
+        {siteUrl && instagramUrl ? (
+          <span className="text-muted-foreground mx-1">•</span>
+        ) : null}
+        {instagramUrl ? (
+          <a
+            href={instagramUrl}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="text-muted-foreground hover:text-foreground hover:underline"
+          >
+            Instagram
+          </a>
+        ) : null}
+      </div>
     </div>
   );
 }
 
-export function Sponsors() {
-  const goldSponsors = sponsors.filter((s) => s.tier === "gold");
-  const silverSponsors = sponsors.filter((s) => s.tier === "silver");
-  const bronzeSponsors = sponsors.filter((s) => s.tier === "bronze");
-
+function SponsorsSectionShell({ children }: { children: ReactNode }) {
   return (
     <section
       id="patrocinadores"
       className="relative overflow-hidden bg-background py-20 lg:py-32"
     >
-      {/* Background decoration */}
       <div className="absolute inset-0 overflow-hidden">
         <div className="absolute top-0 left-1/4 size-[400px] rounded-full bg-jet-gold/5 blur-3xl" />
-        <div className="absolute bottom-0 right-1/4 size-[400px] rounded-full bg-jet-silver/10 blur-3xl" />
+        <div className="absolute right-1/4 bottom-0 size-[400px] rounded-full bg-jet-silver/10 blur-3xl" />
       </div>
+      <div className="container relative mx-auto px-4">{children}</div>
+    </section>
+  );
+}
 
-      <div className="container relative mx-auto px-4">
-        {/* Section Header */}
+export function SponsorsFallback() {
+  return (
+    <SponsorsSectionShell>
+      <div className="mx-auto max-w-3xl text-center">
+        <Badge className="mb-4">Patrocinadores</Badge>
+        <h2 className="font-serif text-3xl font-bold tracking-tight text-foreground sm:text-4xl md:text-5xl">
+          Nossos <span className={"gradient-sponsors-text"}>Parceiros</span>
+        </h2>
+      </div>
+      <p className="mt-8 text-center text-muted-foreground">
+        Carregando patrocinadores…
+      </p>
+    </SponsorsSectionShell>
+  );
+}
+
+export async function Sponsors() {
+  let goldSponsors: PublicSponsorCard[];
+  let silverSponsors: PublicSponsorCard[];
+  let bronzeSponsors: PublicSponsorCard[];
+
+  try {
+    const data = await fetchPublicSponsorsByTier();
+    goldSponsors = data.gold;
+    silverSponsors = data.silver;
+    bronzeSponsors = data.bronze;
+  } catch {
+    return (
+      <SponsorsSectionShell>
         <div className="mx-auto max-w-3xl text-center">
           <Badge className="mb-4">Patrocinadores</Badge>
           <h2 className="font-serif text-3xl font-bold tracking-tight text-foreground sm:text-4xl md:text-5xl">
@@ -127,74 +178,96 @@ export function Sponsors() {
             nossa missão no sul do Piauí.
           </p>
         </div>
-
-        {/* Sponsors Grid */}
-        <div className="mt-16 space-y-12">
-          {/* Gold Sponsors */}
-          {goldSponsors.length > 0 && (
-            <div>
-              <div className="mb-6 flex items-center justify-center gap-2">
-                <Crown className="size-5 text-jet-gold" />
-                <h3 className="font-serif text-xl font-semibold text-jet-gold">
-                  Tier Ouro
-                </h3>
-              </div>
-              <div className="flex flex-wrap items-center justify-center gap-6">
-                {goldSponsors.map((sponsor) => (
-                  <SponsorCard key={sponsor.id} sponsor={sponsor} />
-                ))}
-              </div>
-            </div>
-          )}
-
-          {/* Silver Sponsors */}
-          {silverSponsors.length > 0 && (
-            <div>
-              <div className="mb-6 flex items-center justify-center gap-2">
-                <Medal className="size-5 text-muted-foreground" />
-                <h3 className="font-serif text-xl font-semibold text-muted-foreground">
-                  Tier Prata
-                </h3>
-              </div>
-              <div className="flex flex-wrap items-center justify-center gap-6">
-                {silverSponsors.map((sponsor) => (
-                  <SponsorCard key={sponsor.id} sponsor={sponsor} />
-                ))}
-              </div>
-            </div>
-          )}
-
-          {/* Bronze Sponsors */}
-          {bronzeSponsors.length > 0 && (
-            <div>
-              <div className="mb-6 flex items-center justify-center gap-2">
-                <Award className="size-5 text-jet-bronze" />
-                <h3 className="font-serif text-xl font-semibold text-jet-bronze">
-                  Tier Bronze
-                </h3>
-              </div>
-              <div className="flex flex-wrap items-center justify-center gap-4">
-                {bronzeSponsors.map((sponsor) => (
-                  <SponsorCard key={sponsor.id} sponsor={sponsor} />
-                ))}
-              </div>
-            </div>
-          )}
-        </div>
-
-        {/* CTA */}
+        <SponsorsError />
         <div className="mt-16 text-center">
           <p className="mb-6 text-lg text-muted-foreground">
             Quer ver sua empresa aqui?
           </p>
           <Button asChild variant="outline" size="lg" className="group">
-            <Link href="#pre-cadastro">
+            <Link href="/#pre-cadastro">
               Torne-se um Patrocinador
               <ArrowRight className="size-4 transition-transform group-hover:translate-x-1" />
             </Link>
           </Button>
         </div>
+      </SponsorsSectionShell>
+    );
+  }
+
+  return (
+    <SponsorsSectionShell>
+      <div className="mx-auto max-w-3xl text-center">
+        <Badge className="mb-4">Patrocinadores</Badge>
+        <h2 className="font-serif text-3xl font-bold tracking-tight text-foreground sm:text-4xl md:text-5xl">
+          Nossos <span className={"gradient-sponsors-text"}>Parceiros</span>
+        </h2>
+        <p className="mt-4 text-lg text-muted-foreground">
+          Empresas que acreditam no poder transformador do esporte e apoiam
+          nossa missão no sul do Piauí.
+        </p>
       </div>
-    </section>
+
+      <div className="mt-16 space-y-12">
+        {goldSponsors.length > 0 ? (
+          <div>
+            <div className="mb-6 flex items-center justify-center gap-2">
+              <Crown className="size-5 text-jet-gold" />
+              <h3 className="font-serif text-xl font-semibold text-jet-gold">
+                Tier Ouro
+              </h3>
+            </div>
+            <div className="flex flex-wrap items-center justify-center gap-6">
+              {goldSponsors.map((sponsor) => (
+                <SponsorCard key={sponsor.id} sponsor={sponsor} />
+              ))}
+            </div>
+          </div>
+        ) : null}
+
+        {silverSponsors.length > 0 ? (
+          <div>
+            <div className="mb-6 flex items-center justify-center gap-2">
+              <Medal className="size-5 text-muted-foreground" />
+              <h3 className="font-serif text-xl font-semibold text-muted-foreground">
+                Tier Prata
+              </h3>
+            </div>
+            <div className="flex flex-wrap items-center justify-center gap-6">
+              {silverSponsors.map((sponsor) => (
+                <SponsorCard key={sponsor.id} sponsor={sponsor} />
+              ))}
+            </div>
+          </div>
+        ) : null}
+
+        {bronzeSponsors.length > 0 ? (
+          <div>
+            <div className="mb-6 flex items-center justify-center gap-2">
+              <Award className="size-5 text-jet-bronze" />
+              <h3 className="font-serif text-xl font-semibold text-jet-bronze">
+                Tier Bronze
+              </h3>
+            </div>
+            <div className="flex flex-wrap items-center justify-center gap-4">
+              {bronzeSponsors.map((sponsor) => (
+                <SponsorCard key={sponsor.id} sponsor={sponsor} />
+              ))}
+            </div>
+          </div>
+        ) : null}
+      </div>
+
+      <div className="mt-16 text-center">
+        <p className="mb-6 text-lg text-muted-foreground">
+          Quer ver sua empresa aqui?
+        </p>
+        <Button asChild variant="outline" size="lg" className="group">
+          <Link href="/#pre-cadastro">
+            Torne-se um Patrocinador
+            <ArrowRight className="size-4 transition-transform group-hover:translate-x-1" />
+          </Link>
+        </Button>
+      </div>
+    </SponsorsSectionShell>
   );
 }

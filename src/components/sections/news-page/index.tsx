@@ -269,19 +269,17 @@ export function NewsPageContent() {
                 />
               </div>
             )}
+
+            <div className="mt-10 border-t border-border/50 pt-10 lg:hidden">
+              <GoldSponsorsCompact />
+            </div>
           </div>
 
-          {/* Sidebar - Desktop Only */}
           <div className="hidden lg:block lg:w-72 lg:shrink-0">
             <div className="sticky top-28">
               <GoldSponsorsSidebar />
             </div>
           </div>
-        </div>
-
-        {/* Gold Sponsors - Mobile/Tablet */}
-        <div className="mt-12 lg:hidden">
-          <GoldSponsorsCompact />
         </div>
       </div>
     </section>

@@ -18,6 +18,15 @@ Open [http://localhost:3000](http://localhost:3000) with your browser to see the
 
 You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
 
+## Variáveis de ambiente
+
+| Variável | Descrição | Exemplo |
+| --- | --- | --- |
+| `NEXT_PUBLIC_BACKOFFICE_API_URL` | URL base da API do backoffice (sem barra final). Usada na seção de patrocinadores (`GET /v1/public/sponsors`). | `http://localhost:8080` |
+| `NEXT_PUBLIC_R2_PUBLIC_URL` | URL pública do bucket R2/CDN (sem barra final). Usada para montar a URL das logos quando a API devolve apenas o path ou object key. | `https://pub-134d43c3b2494394b518c46b052650ee.r2.dev` |
+
+Copie para `.env.local` e ajuste conforme o ambiente.
+
 This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
 
 ## Learn More
