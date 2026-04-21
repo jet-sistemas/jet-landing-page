@@ -1,9 +1,11 @@
+import { Suspense } from "react";
+
 import { Footer } from "@/components/layout/footer";
 import { Header } from "@/components/layout/header";
 import { Benefits } from "@/components/sections/benefits";
 import { Hero } from "@/components/sections/hero";
 import { PreRegister } from "@/components/sections/pre-register";
-import { Sponsors } from "@/components/sections/sponsors";
+import { Sponsors, SponsorsFallback } from "@/components/sections/sponsors";
 import { StrapiPublications } from "@/components/sections/strapi-publications";
 
 export default function Home() {
@@ -13,7 +15,9 @@ export default function Home() {
       <main>
         <Hero />
         <Benefits />
-        <Sponsors />
+        <Suspense fallback={<SponsorsFallback />}>
+          <Sponsors />
+        </Suspense>
         <StrapiPublications />
         <PreRegister />
       </main>

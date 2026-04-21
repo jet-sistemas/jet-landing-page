@@ -4,6 +4,7 @@ import { Loader2 } from "lucide-react";
 import { Header } from "@/components/layout/header";
 import { Footer } from "@/components/layout/footer";
 import { NewsPageContent } from "@/components/sections/news-page";
+import { Sponsors, SponsorsFallback } from "@/components/sections/sponsors";
 
 export const metadata: Metadata = {
   title: "Notícias | Associação Desportiva J&T",
@@ -27,6 +28,9 @@ export default function NoticiasPage() {
       <main className="min-h-screen pt-17 md:pt-21">
         <Suspense fallback={<NewsLoading />}>
           <NewsPageContent />
+        </Suspense>
+        <Suspense fallback={<SponsorsFallback />}>
+          <Sponsors />
         </Suspense>
       </main>
       <Footer />

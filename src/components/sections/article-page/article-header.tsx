@@ -88,7 +88,7 @@ export function ArticleHeader({ article }: ArticleHeaderProps) {
       <div className="container mx-auto px-4">
         <div className="relative -mt-24 sm:-mt-32 lg:-mt-40 z-10">
           <div className="rounded-2xl border border-border/50 bg-card/95 backdrop-blur-xl p-6 sm:p-8 lg:p-10 shadow-xl">
-            <div className="flex flex-col lg:flex-row lg:gap-8">
+            <div className="flex flex-col lg:flex-row lg:items-stretch lg:gap-8">
               {/* Main content */}
               <div className="flex-1 min-w-0">
                 {/* Date */}
@@ -138,7 +138,7 @@ export function ArticleHeader({ article }: ArticleHeaderProps) {
               </div>
 
               {/* Sponsors Carousel - Desktop */}
-              <div className="hidden lg:block lg:w-64 lg:shrink-0 lg:border-l lg:border-border/50 lg:pl-8">
+              <div className="hidden min-h-0 lg:flex lg:w-64 lg:shrink-0 lg:flex-col lg:border-l lg:border-border/50 lg:pl-8">
                 <GoldSponsorsCarousel />
               </div>
             </div>

@@ -1,16 +1,25 @@
 "use client";
 
-import { useEffect, useCallback } from "react";
+import { useEffect, useRef, useState } from "react";
 import useEmblaCarousel from "embla-carousel-react";
 import Autoplay from "embla-carousel-autoplay";
-import { Building2, Crown, ExternalLink } from "lucide-react";
+import { Crown } from "lucide-react";
 import Link from "next/link";
 
+import { GoldSponsorCard } from "@/components/sections/gold-sponsor-card";
 import { Button } from "@/components/ui/button";
-import { sponsors } from "@/lib/data";
+import {
+  fetchPublicSponsorsPage,
+  type PublicSponsorCard,
+} from "@/lib/backoffice-sponsors";
 
 export function GoldSponsorsCarousel() {
-  const goldSponsors = sponsors.filter((s) => s.tier === "gold");
+  const [items, setItems] = useState<PublicSponsorCard[]>([]);
+  const [totalPages, setTotalPages] = useState(1);
+  const [loadedPage, setLoadedPage] = useState(0);
+  const [loading, setLoading] = useState(true);
+
+  const loadLock = useRef(false);
 
   const [emblaRef, emblaApi] = useEmblaCarousel(
     {
@@ -27,93 +36,124 @@ export function GoldSponsorsCarousel() {
     ]
   );
 
-  const scrollPrev = useCallback(() => {
-    if (emblaApi) emblaApi.scrollPrev();
-  }, [emblaApi]);
-
-  const scrollNext = useCallback(() => {
-    if (emblaApi) emblaApi.scrollNext();
-  }, [emblaApi]);
-
-  // Re-init embla when sponsors change
   useEffect(() => {
-    if (emblaApi) {
-      emblaApi.reInit();
-    }
-  }, [emblaApi, goldSponsors]);
+    let cancelled = false;
+    (async () => {
+      try {
+        setLoading(true);
+        const r = await fetchPublicSponsorsPage("GOLD", 1, 10);
+        if (cancelled) return;
+        setItems(r.items);
+        setTotalPages(Math.max(1, r.totalPages));
+        setLoadedPage(1);
+      } catch {
+        if (!cancelled) {
+          setItems([]);
+          setTotalPages(1);
+          setLoadedPage(0);
+        }
+      } finally {
+        if (!cancelled) setLoading(false);
+      }
+    })();
+    return () => {
+      cancelled = true;
+    };
+  }, []);
 
-  if (goldSponsors.length === 0) {
+  useEffect(() => {
+    if (!emblaApi) return;
+
+    const onSelect = () => {
+      const idx = emblaApi.selectedScrollSnap();
+      const len = items.length;
+      if (len === 0) return;
+      if (idx !== len - 1) return;
+      if ((idx + 1) % 10 !== 0) return;
+      if (loadedPage >= totalPages) return;
+      if (loadLock.current) return;
+
+      loadLock.current = true;
+      fetchPublicSponsorsPage("GOLD", loadedPage + 1, 10)
+        .then((r) => {
+          setItems((prev) => {
+            const ids = new Set(prev.map((p) => p.id));
+            const merged = [...prev];
+            for (const it of r.items) {
+              if (!ids.has(it.id)) merged.push(it);
+            }
+            return merged;
+          });
+          setLoadedPage((p) => p + 1);
+        })
+        .catch(() => {})
+        .finally(() => {
+          loadLock.current = false;
+        });
+    };
+
+    emblaApi.on("select", onSelect);
+    return () => {
+      emblaApi.off("select", onSelect);
+    };
+  }, [emblaApi, items.length, loadedPage, totalPages]);
+
+  useEffect(() => {
+    if (emblaApi) emblaApi.reInit();
+  }, [emblaApi, items]);
+
+  if (loading) {
+    return null;
+  }
+
+  if (items.length === 0) {
     return null;
   }
 
   return (
-    <div className="w-full">
-      {/* Header */}
-      <div className="flex items-center justify-center gap-2 mb-4">
+    <div className="flex min-h-0 w-full flex-1 flex-col">
+      <div className="mb-4 flex shrink-0 items-center justify-center gap-2">
         <Crown className="size-4 text-jet-gold" />
         <h3 className="font-serif text-md font-semibold text-jet-gold">
           Patrocinador Ouro
         </h3>
       </div>
 
-      {/* Carousel */}
-      <div className="relative rounded-xl border border-jet-gold/30 bg-jet-gold/5 p-4 overflow-hidden">
-        <div ref={emblaRef} className="overflow-hidden">
-          <div className="flex">
-            {goldSponsors.map((sponsor) => (
+      <div className="relative flex min-h-0 flex-1 flex-col overflow-hidden rounded-xl border border-jet-gold/30 bg-jet-gold/5 p-4">
+        <div ref={emblaRef} className="min-h-0 flex-1 overflow-hidden">
+          <div className="flex h-full">
+            {items.map((sponsor) => (
               <div
                 key={sponsor.id}
-                className="flex-[0_0_100%] min-w-0 flex flex-col items-center justify-center"
+                className="group flex h-full min-h-0 min-w-0 flex-[0_0_100%] flex-col items-center justify-center"
               >
-                {/* Logo placeholder */}
-                <div className="flex size-16 items-center justify-center rounded-lg bg-jet-gold/10 mb-3 transition-transform hover:scale-105">
-                  <Building2 className="size-8 text-jet-gold" />
-                </div>
-
-                {/* Name */}
-                <h4 className="text-center font-medium text-foreground text-sm mb-2">
-                  {sponsor.name}
-                </h4>
-
-                {/* Website link */}
-                {sponsor.website && (
-                  <a
-                    href={sponsor.website}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="inline-flex items-center gap-1 text-xs text-muted-foreground hover:text-jet-gold transition-colors"
-                  >
-                    Visitar site
-                    <ExternalLink className="size-3" />
-                  </a>
-                )}
+                <GoldSponsorCard variant="carousel" sponsor={sponsor} />
               </div>
             ))}
           </div>
         </div>
 
-        {/* Navigation dots */}
-        {goldSponsors.length > 1 && (
-          <div className="flex justify-center gap-1.5 mt-4">
-            {goldSponsors.map((_, index) => (
+        {items.length > 1 ? (
+          <div className="mt-4 flex shrink-0 justify-center gap-1.5">
+            {items.map((_, index) => (
               <button
                 key={index}
+                type="button"
                 onClick={() => emblaApi?.scrollTo(index)}
-                className="size-2 rounded-full bg-jet-gold/30 hover:bg-jet-gold/60 transition-colors"
+                className="size-2 rounded-full bg-jet-gold/30 transition-colors hover:bg-jet-gold/60"
                 aria-label={`Ir para patrocinador ${index + 1}`}
               />
             ))}
           </div>
-        )}
+        ) : null}
       </div>
 
-      {/* CTA */}
-      <div className="mt-4 text-center">
+      <div className="mt-4 shrink-0 text-center">
         <Button
           asChild
-          variant="ghost"
+          variant="outline"
           size="sm"
-          className="text-xs text-muted-foreground hover:text-jet-gold"
+          className="border-jet-gold/30 text-jet-gold hover:bg-jet-gold/10 hover:text-jet-gold"
         >
           <Link href="/#pre-cadastro">Seja um Patrocinador</Link>
         </Button>

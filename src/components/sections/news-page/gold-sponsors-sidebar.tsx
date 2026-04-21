@@ -1,136 +1,243 @@
 "use client";
 
-import { Building2, Crown, ExternalLink } from "lucide-react";
+import { useEffect, useMemo, useState } from "react";
+import useEmblaCarousel from "embla-carousel-react";
+import Autoplay from "embla-carousel-autoplay";
+import { Crown } from "lucide-react";
 import Link from "next/link";
 
+import { GoldSponsorCard } from "@/components/sections/gold-sponsor-card";
 import { Button } from "@/components/ui/button";
-import { sponsors } from "@/lib/data";
+import {
+  fetchAllPublicSponsorsForTier,
+  type PublicSponsorCard,
+} from "@/lib/backoffice-sponsors";
 import { cn } from "@/lib/utils";
 
-export function GoldSponsorsSidebar() {
-  const goldSponsors = sponsors.filter((s) => s.tier === "gold");
+function SponsorsCtaBlock() {
+  return (
+    <div className="mt-6 border-t border-jet-gold/60 pt-6">
+      <p className="mb-3 text-center text-sm font-semibold text-muted-foreground">
+        Quer ser um patrocinador?
+      </p>
+      <Button
+        asChild
+        variant="outline"
+        size="sm"
+        className="w-full border-jet-gold/30 text-jet-gold hover:bg-jet-gold/10 hover:text-jet-gold"
+      >
+        <Link href="/#pre-cadastro">Seja um Parceiro</Link>
+      </Button>
+    </div>
+  );
+}
 
-  if (goldSponsors.length === 0) {
-    return null;
+function chunkSponsorsInPairs(list: PublicSponsorCard[]): PublicSponsorCard[][] {
+  const pairs: PublicSponsorCard[][] = [];
+  for (let i = 0; i < list.length; i += 2) {
+    pairs.push(list.slice(i, i + 2));
   }
+  return pairs;
+}
+
+export function GoldSponsorsSidebar() {
+  const [items, setItems] = useState<PublicSponsorCard[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(false);
+  const [selectedSlide, setSelectedSlide] = useState(0);
+
+  const slideGroups = useMemo(() => chunkSponsorsInPairs(items), [items]);
+
+  const [emblaRef, emblaApi] = useEmblaCarousel(
+    {
+      loop: slideGroups.length > 1,
+      align: "start",
+    },
+    [
+      Autoplay({
+        delay: 5000,
+        stopOnInteraction: false,
+        stopOnMouseEnter: true,
+      }),
+    ]
+  );
+
+  useEffect(() => {
+    let cancelled = false;
+    (async () => {
+      try {
+        setLoading(true);
+        setError(false);
+        const all = await fetchAllPublicSponsorsForTier("GOLD");
+        if (!cancelled) setItems(all);
+      } catch {
+        if (!cancelled) {
+          setError(true);
+          setItems([]);
+        }
+      } finally {
+        if (!cancelled) setLoading(false);
+      }
+    })();
+    return () => {
+      cancelled = true;
+    };
+  }, []);
+
+  useEffect(() => {
+    if (!emblaApi) return;
+    emblaApi.reInit();
+  }, [emblaApi, items]);
+
+  useEffect(() => {
+    if (!emblaApi) return;
+    const onSelect = () => setSelectedSlide(emblaApi.selectedScrollSnap());
+    emblaApi.on("select", onSelect);
+    emblaApi.on("reInit", onSelect);
+    onSelect();
+    return () => {
+      emblaApi.off("select", onSelect);
+      emblaApi.off("reInit", onSelect);
+    };
+  }, [emblaApi]);
 
   return (
     <aside className="rounded-xl border border-jet-gold/60 bg-jet-gold/15 p-6 backdrop-blur-sm">
-      {/* Header */}
-      <div className="flex items-center gap-2 mb-6">
+      <div className="mb-6 flex items-center gap-2">
         <Crown className="size-5 text-jet-gold" />
         <h3 className="font-serif text-xl font-semibold text-jet-gold">
           Patrocinadores Ouro
         </h3>
       </div>
 
-      {/* Sponsors List */}
-      <div className="space-y-4">
-        {goldSponsors.map((sponsor) => (
-          <div
-            key={sponsor.id}
-            className={cn(
-              "group relative flex flex-col items-center rounded-lg border border-jet-gold/20 bg-background/50 p-4 transition-all hover:border-jet-gold/40 hover:shadow-md"
-            )}
-          >
-            {/* Logo placeholder */}
-            <div className="flex size-16 items-center justify-center rounded-lg bg-jet-gold/10 mb-3 transition-transform group-hover:scale-105">
-              <Building2 className="size-8 text-jet-gold" />
-            </div>
-
-            {/* Name */}
-            <h4 className="text-center font-medium text-foreground text-sm mb-2">
-              {sponsor.name}
-            </h4>
-
-            {/* Website link */}
-            {sponsor.website && (
-              <a
-                href={sponsor.website}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="inline-flex items-center gap-1 text-xs text-muted-foreground hover:text-jet-gold transition-colors"
-              >
-                Visitar site
-                <ExternalLink className="size-3" />
-              </a>
-            )}
-          </div>
-        ))}
-      </div>
-
-      {/* CTA */}
-      <div className="mt-6 pt-6 border-t border-jet-gold/60">
-        <p className="text-center font-semibold text-sm text-muted-foreground mb-3">
-          Quer ser um patrocinador?
+      {loading && items.length === 0 ? (
+        <p className="text-center text-sm text-muted-foreground">
+          Carregando patrocinadores…
         </p>
-        <Button
-          asChild
-          variant="outline"
-          size="sm"
-          className="w-full border-jet-gold/30 text-jet-gold hover:bg-jet-gold/10 hover:text-jet-gold"
-        >
-          <Link href="/#pre-cadastro">Seja um Parceiro</Link>
-        </Button>
-      </div>
+      ) : error ? (
+        <p className="text-center text-sm text-muted-foreground">
+          Não foi possível carregar os patrocinadores. Tente novamente mais
+          tarde.
+        </p>
+      ) : items.length === 0 ? (
+        <p className="text-center text-sm text-muted-foreground">
+          Nenhum patrocinador ouro no momento.
+        </p>
+      ) : (
+        <div>
+          <div ref={emblaRef} className="overflow-hidden">
+            <div className="flex touch-pan-y">
+              {slideGroups.map((pair) => (
+                <div
+                  key={`${pair[0]?.id ?? ""}-${pair[1]?.id ?? ""}`}
+                  className="min-w-0 flex-[0_0_100%]"
+                >
+                  <div className="grid grid-cols-2 gap-4">
+                    {pair.map((sponsor) => (
+                      <div key={sponsor.id} className="min-w-0">
+                        <GoldSponsorCard sponsor={sponsor} />
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          {slideGroups.length > 1 ? (
+            <div className="mt-4 flex justify-center gap-1.5">
+              {slideGroups.map((_, index) => (
+                <button
+                  key={index}
+                  type="button"
+                  onClick={() => emblaApi?.scrollTo(index)}
+                  className={cn(
+                    "size-2 rounded-full transition-colors",
+                    index === selectedSlide
+                      ? "bg-jet-gold"
+                      : "bg-jet-gold/30 hover:bg-jet-gold/60"
+                  )}
+                  aria-label={`Ir para o grupo ${index + 1} de patrocinadores`}
+                  aria-current={index === selectedSlide ? "true" : undefined}
+                />
+              ))}
+            </div>
+          ) : null}
+        </div>
+      )}
+
+      <SponsorsCtaBlock />
     </aside>
   );
 }
 
-/**
- * Versão compacta para mobile - exibida abaixo da paginação
- */
 export function GoldSponsorsCompact() {
-  const goldSponsors = sponsors.filter((s) => s.tier === "gold");
+  const [items, setItems] = useState<PublicSponsorCard[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(false);
 
-  if (goldSponsors.length === 0) {
-    return null;
-  }
+  useEffect(() => {
+    let cancelled = false;
+    (async () => {
+      try {
+        setLoading(true);
+        setError(false);
+        const all = await fetchAllPublicSponsorsForTier("GOLD");
+        if (!cancelled) setItems(all);
+      } catch {
+        if (!cancelled) {
+          setError(true);
+          setItems([]);
+        }
+      } finally {
+        if (!cancelled) setLoading(false);
+      }
+    })();
+    return () => {
+      cancelled = true;
+    };
+  }, []);
 
   return (
     <section className="rounded-xl border border-jet-gold/30 bg-jet-gold/5 p-6">
-      {/* Header */}
-      <div className="flex items-center justify-center gap-2 mb-6">
+      <div className="mb-6 flex items-center justify-center gap-2">
         <Crown className="size-5 text-jet-gold" />
         <h3 className="font-serif text-lg font-semibold text-jet-gold">
           Patrocinadores Ouro
         </h3>
       </div>
 
-      {/* Sponsors Grid */}
-      <div className="grid grid-cols-2 gap-4 sm:flex sm:flex-wrap sm:justify-center sm:gap-6">
-        {goldSponsors.map((sponsor) => (
-          <div
-            key={sponsor.id}
-            className="group flex flex-col items-center rounded-lg border border-jet-gold/20 bg-background/50 p-4 transition-all hover:border-jet-gold/40"
-          >
-            <div className="flex size-14 items-center justify-center rounded-lg bg-jet-gold/10 mb-2">
-              <Building2 className="size-7 text-jet-gold" />
-            </div>
-            <h4 className="text-center font-medium text-foreground text-sm">
-              {sponsor.name}
-            </h4>
-            {sponsor.website && (
-              <a
-                href={sponsor.website}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="mt-1 inline-flex items-center gap-1 text-xs text-muted-foreground hover:text-jet-gold transition-colors"
-              >
-                <ExternalLink className="size-3" />
-              </a>
-            )}
-          </div>
-        ))}
-      </div>
+      {loading && items.length === 0 ? (
+        <p className="mb-6 text-center text-sm text-muted-foreground">
+          Carregando patrocinadores…
+        </p>
+      ) : error ? (
+        <p className="mb-6 text-center text-sm text-muted-foreground">
+          Não foi possível carregar os patrocinadores.
+        </p>
+      ) : items.length === 0 ? (
+        <p className="mb-6 text-center text-sm text-muted-foreground">
+          Nenhum patrocinador ouro no momento.
+        </p>
+      ) : (
+        <div className="mb-6 grid grid-cols-2 gap-4 sm:flex sm:flex-wrap sm:justify-center sm:gap-6">
+          {items.map((sponsor) => (
+            <GoldSponsorCard
+              key={sponsor.id}
+              variant="compact"
+              className="sm:max-w-[140px]"
+              sponsor={sponsor}
+            />
+          ))}
+        </div>
+      )}
 
-      {/* CTA */}
-      <div className="mt-6 text-center">
+      <div className="text-center">
         <Button
           asChild
           variant="outline"
           size="sm"
-          className="border-jet-gold/30 text-jet-gold hover:bg-jet-gold/10"
+          className="border-jet-gold/30 text-jet-gold hover:bg-jet-gold/10 hover:text-jet-gold"
         >
           <Link href="/#pre-cadastro">Seja um Patrocinador</Link>
         </Button>

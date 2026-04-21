@@ -1,15 +1,18 @@
 import { Metadata } from "next";
 import { notFound } from "next/navigation";
+import { Suspense } from "react";
 
-import { Header } from "@/components/layout/header";
 import { Footer } from "@/components/layout/footer";
+import { Header } from "@/components/layout/header";
 import { ArticlePageContent } from "@/components/sections/article-page";
+import { Sponsors, SponsorsFallback } from "@/components/sections/sponsors";
 import {
   fetchArticleBySlug,
   fetchLatestArticles,
   fetchRelatedArticles,
   getStrapiImageUrl,
 } from "@/lib/strapi";
+import { Article } from "@/types/entities";
 
 type ArticlePageProps = {
   params: Promise<{ slug: string }>;
@@ -60,7 +63,7 @@ export default async function ArticlePage({ params }: ArticlePageProps) {
   }
 
   // Busca artigos relacionados (mesma categoria) ou mais recentes
-  let relatedArticles = article.category?.slug
+  let relatedArticles = article?.category?.slug
     ? await fetchRelatedArticles(article.category.slug, slug, 4)
     : [];
 
@@ -74,9 +77,12 @@ export default async function ArticlePage({ params }: ArticlePageProps) {
       <Header />
       <main className="min-h-screen pt-17 md:pt-21">
         <ArticlePageContent
-          article={article}
+          article={article as Article}
           relatedArticles={relatedArticles}
         />
+        <Suspense fallback={<SponsorsFallback />}>
+          <Sponsors />
+        </Suspense>
       </main>
       <Footer />
     </>
