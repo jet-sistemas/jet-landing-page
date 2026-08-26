@@ -82,7 +82,7 @@ export function Header() {
                 size="lg"
                 className={cn("gradient-gold-accent-glow")}
               >
-                <Link href="#pre-cadastro">Torne-se um Parceiro</Link>
+                <Link href="/#pre-cadastro">Torne-se um Parceiro</Link>
               </Button>
             </div>
 
@@ -127,7 +127,7 @@ export function Header() {
                         className="w-full"
                         onClick={() => setIsOpen(false)}
                       >
-                        <Link href="#pre-cadastro">Torne-se um Parceiro</Link>
+                        <Link href="/#pre-cadastro">Torne-se um Parceiro</Link>
                       </Button>
                     </div>
                   </nav>
