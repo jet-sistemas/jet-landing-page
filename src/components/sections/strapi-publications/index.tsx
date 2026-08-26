@@ -36,11 +36,7 @@ export function StrapiPublications() {
           },
         );
 
-        if (result.data.length > 0) {
-          setArticles(result.data);
-        } else {
-          setError(result.message || "Erro ao carregar artigos");
-        }
+        setArticles(result.data);
       } catch (err) {
         setError(
           "Erro ao conectar com o Strapi. Verifique se o servidor está rodando.",
