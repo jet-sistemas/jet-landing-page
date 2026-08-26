@@ -2,47 +2,62 @@
 
 import { Article } from "@/types/entities";
 import { StrapiPublicationCard } from "../strapi-publications/strapi-publication-card";
-import { FileX, Loader2 } from "lucide-react";
+
+import {
+  getArticleSlug,
+  NEWS_GRID_FULL_SKELETON_COUNT,
+  NEWS_GRID_SKELETON_COUNT,
+} from "./news-grid.constants";
+import { EmptyNewsGrid, LoadingNewsGrid } from "./loading-news-grid";
 
 type NewsGridProps = {
   articles: Article[];
   isLoading?: boolean;
+  skeletonCount?: number;
+  navigatingSlug?: string | null;
+  onNavigate?: (slug: string) => void;
 };
 
-export function NewsGrid({ articles, isLoading }: NewsGridProps) {
+export function NewsGrid({
+  articles,
+  isLoading,
+  skeletonCount = NEWS_GRID_SKELETON_COUNT,
+  navigatingSlug = null,
+  onNavigate,
+}: NewsGridProps) {
+  const isGridBusy = navigatingSlug !== null;
+
   if (isLoading) {
-    return (
-      <div className="flex flex-col items-center justify-center py-20">
-        <Loader2 className="size-10 animate-spin text-accent" />
-        <p className="mt-4 text-muted-foreground">Carregando notícias...</p>
-      </div>
-    );
+    return <LoadingNewsGrid count={skeletonCount} />;
   }
 
   if (articles.length === 0) {
     return (
-      <div className="flex flex-col items-center justify-center py-20 text-center">
-        <div className="rounded-full bg-muted p-6 mb-4">
-          <FileX className="size-10 text-muted-foreground" />
-        </div>
-        <h3 className="font-serif text-xl font-semibold text-foreground">
-          Nenhuma notícia encontrada
-        </h3>
-        <p className="mt-2 max-w-md text-muted-foreground">
-          Tente ajustar os filtros ou buscar por outros termos.
-        </p>
-      </div>
+      <EmptyNewsGrid
+        count={
+          skeletonCount === NEWS_GRID_SKELETON_COUNT
+            ? NEWS_GRID_SKELETON_COUNT
+            : NEWS_GRID_FULL_SKELETON_COUNT
+        }
+      />
     );
   }
 
   return (
     <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-      {articles.map((article) => (
-        <StrapiPublicationCard
-          key={article.documentId || article.id}
-          article={article}
-        />
-      ))}
+      {articles.map((article) => {
+        const slug = getArticleSlug(article);
+
+        return (
+          <StrapiPublicationCard
+            key={article.documentId || article.id}
+            article={article}
+            isNavigating={navigatingSlug === slug}
+            isGridBusy={isGridBusy}
+            onNavigate={onNavigate}
+          />
+        );
+      })}
     </div>
   );
 }

@@ -11,7 +11,7 @@ type GridPlaceholderProps = {
   count: number;
   gridClassName?: string;
   className?: string;
-  featuredIndex?: number;
+  featuredIndex?: number | null;
   featuredClassName?: string;
   itemConfig?: GridPlaceholderItemConfig;
   featuredItemConfig?: GridPlaceholderItemConfig;
@@ -59,7 +59,8 @@ export function GridPlaceholder({
     <div className={cn("relative", className)}>
       <div aria-label={ariaLabel} className={gridClassName}>
         {Array.from({ length: count }, (_, index) => {
-          const isFeatured = index === featuredIndex;
+          const isFeatured =
+            featuredIndex !== null && index === featuredIndex;
           const config = isFeatured
             ? { imageHeight: "h-64", ...featuredItemConfig }
             : { imageHeight: "h-48", ...itemConfig };

@@ -46,6 +46,11 @@ export function StrapiPublicationCard({
     router.push(href);
   };
 
+  const handlePrefetch = () => {
+    if (isGridBusy) return;
+    router.prefetch(href);
+  };
+
   const handleKeyDown = (event: KeyboardEvent<HTMLDivElement>) => {
     if (event.key !== "Enter" && event.key !== " ") return;
     event.preventDefault();
@@ -59,6 +64,8 @@ export function StrapiPublicationCard({
       aria-label={`Ler artigo: ${article?.title}`}
       aria-busy={isNavigating}
       onClick={handleNavigate}
+      onMouseEnter={handlePrefetch}
+      onFocus={handlePrefetch}
       onKeyDown={handleKeyDown}
       className={cn(
         "relative hover:cursor-pointer",

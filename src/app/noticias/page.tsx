@@ -1,9 +1,10 @@
 import { Metadata } from "next";
 import { Suspense } from "react";
-import { Loader2 } from "lucide-react";
-import { Header } from "@/components/layout/header";
+
 import { Footer } from "@/components/layout/footer";
+import { Header } from "@/components/layout/header";
 import { NewsPageContent } from "@/components/sections/news-page";
+import { NewsPageLoading } from "@/components/sections/news-page/news-page-loading";
 import { Sponsors, SponsorsFallback } from "@/components/sections/sponsors";
 
 export const metadata: Metadata = {
@@ -13,12 +14,7 @@ export const metadata: Metadata = {
 };
 
 function NewsLoading() {
-  return (
-    <div className="flex min-h-[60vh] flex-col items-center justify-center">
-      <Loader2 className="size-10 animate-spin text-accent" />
-      <p className="mt-4 text-muted-foreground">Carregando notícias...</p>
-    </div>
-  );
+  return <NewsPageLoading />;
 }
 
 export default function NoticiasPage() {
