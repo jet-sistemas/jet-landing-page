@@ -116,7 +116,7 @@ export async function fetchStrapiContent<T = Article>(
   }
 
   const response = await fetch(url.toString(), {
-    // next: { revalidate: 60 }, // Revalida a cada 1min
+    next: { revalidate: 60 },
     headers: {
       "Content-Type": "application/json",
     },
