@@ -15,6 +15,10 @@ import {
 import { cn } from "@/lib/utils";
 import type { SponsorTier } from "@/types/entities";
 
+import { EmptySponsors, LoadingSponsors } from "./loading-sponsors";
+import { SPONSORS_TIERS_LAYOUT_CLASS } from "./sponsors.constants";
+import { SponsorsTiersSkeleton } from "./sponsors-tier-skeleton";
+
 const tierConfig: Record<
   SponsorTier,
   {
@@ -69,14 +73,14 @@ function SponsorCard({ sponsor }: { sponsor: PublicSponsorCard }) {
       className={cn(
         "group relative flex flex-col items-center rounded-xl border-2 p-6 transition-all hover:shadow-lg",
         tier.borderColor,
-        tier.bgColor
+        tier.bgColor,
       )}
     >
       <div
         className={cn(
           "absolute -top-3 left-1/2 flex -translate-x-1/2 items-center gap-1 rounded-full px-3 py-1 text-xs font-medium",
           tier.bgBadgeColor,
-          tier.textBadgeColor
+          tier.textBadgeColor,
         )}
       >
         <TierIcon className="size-3" />
@@ -107,7 +111,7 @@ function SponsorCard({ sponsor }: { sponsor: PublicSponsorCard }) {
           </a>
         ) : null}
         {siteUrl && instagramUrl ? (
-          <span className="text-muted-foreground mx-1">•</span>
+          <span className="mx-1 text-muted-foreground">•</span>
         ) : null}
         {instagramUrl ? (
           <a
@@ -139,18 +143,93 @@ function SponsorsSectionShell({ children }: { children: ReactNode }) {
   );
 }
 
+function SponsorsSectionHeader() {
+  return (
+    <div className="mx-auto max-w-3xl text-center">
+      <Badge className="mb-4">Patrocinadores</Badge>
+      <h2 className="font-serif text-3xl font-bold tracking-tight text-foreground sm:text-4xl md:text-5xl">
+        Nossos <span className="gradient-sponsors-text">Parceiros</span>
+      </h2>
+      <p className="mt-4 text-lg text-muted-foreground">
+        Empresas que acreditam no poder transformador do esporte e apoiam nossa
+        missão no sul do Piauí.
+      </p>
+    </div>
+  );
+}
+
+function SponsorsCta() {
+  return (
+    <div className="mt-16 text-center">
+      <p className="mb-6 text-lg text-muted-foreground">
+        Quer ver sua empresa aqui?
+      </p>
+      <Button asChild variant="outline" size="lg" className="group">
+        <Link href="/#pre-cadastro">
+          Torne-se um Patrocinador
+          <ArrowRight className="size-4 transition-transform group-hover:translate-x-1" />
+        </Link>
+      </Button>
+    </div>
+  );
+}
+
+function SponsorsTierSection({
+  tier,
+  sponsors,
+  gapClassName,
+}: {
+  tier: SponsorTier;
+  sponsors: PublicSponsorCard[];
+  gapClassName: string;
+}) {
+  if (sponsors.length === 0) return null;
+
+  const config = tierConfig[tier];
+  const TierIcon = config.icon;
+  const tierTitle =
+    tier === "gold" ? "Tier Ouro" : tier === "silver" ? "Tier Prata" : "Tier Bronze";
+  const titleClassName =
+    tier === "gold"
+      ? "text-jet-gold"
+      : tier === "silver"
+        ? "text-muted-foreground"
+        : "text-jet-bronze";
+  const iconClassName =
+    tier === "gold"
+      ? "text-jet-gold"
+      : tier === "silver"
+        ? "text-muted-foreground"
+        : "text-jet-bronze";
+
+  return (
+    <div>
+      <div className="mb-6 flex items-center justify-center gap-2">
+        <TierIcon className={cn("size-5", iconClassName)} />
+        <h3 className={cn("font-serif text-xl font-semibold", titleClassName)}>
+          {tierTitle}
+        </h3>
+      </div>
+      <div
+        className={cn(
+          "flex flex-wrap items-center justify-center",
+          gapClassName,
+        )}
+      >
+        {sponsors.map((sponsor) => (
+          <SponsorCard key={sponsor.id} sponsor={sponsor} />
+        ))}
+      </div>
+    </div>
+  );
+}
+
 export function SponsorsFallback() {
   return (
     <SponsorsSectionShell>
-      <div className="mx-auto max-w-3xl text-center">
-        <Badge className="mb-4">Patrocinadores</Badge>
-        <h2 className="font-serif text-3xl font-bold tracking-tight text-foreground sm:text-4xl md:text-5xl">
-          Nossos <span className={"gradient-sponsors-text"}>Parceiros</span>
-        </h2>
-      </div>
-      <p className="mt-8 text-center text-muted-foreground">
-        Carregando patrocinadores…
-      </p>
+      <SponsorsSectionHeader />
+      <LoadingSponsors />
+      <SponsorsCta />
     </SponsorsSectionShell>
   );
 }
@@ -168,106 +247,54 @@ export async function Sponsors() {
   } catch {
     return (
       <SponsorsSectionShell>
-        <div className="mx-auto max-w-3xl text-center">
-          <Badge className="mb-4">Patrocinadores</Badge>
-          <h2 className="font-serif text-3xl font-bold tracking-tight text-foreground sm:text-4xl md:text-5xl">
-            Nossos <span className={"gradient-sponsors-text"}>Parceiros</span>
-          </h2>
-          <p className="mt-4 text-lg text-muted-foreground">
-            Empresas que acreditam no poder transformador do esporte e apoiam
-            nossa missão no sul do Piauí.
-          </p>
+        <SponsorsSectionHeader />
+        <div className="relative mt-16">
+          <SponsorsTiersSkeleton
+            variant="placeholder"
+            className="space-y-12"
+            aria-label="Erro ao carregar patrocinadores"
+          />
+          <div className="absolute inset-0 flex items-center justify-center p-6">
+            <SponsorsError className="max-w-md bg-background/95 shadow-sm backdrop-blur-sm" />
+          </div>
         </div>
-        <SponsorsError />
-        <div className="mt-16 text-center">
-          <p className="mb-6 text-lg text-muted-foreground">
-            Quer ver sua empresa aqui?
-          </p>
-          <Button asChild variant="outline" size="lg" className="group">
-            <Link href="/#pre-cadastro">
-              Torne-se um Patrocinador
-              <ArrowRight className="size-4 transition-transform group-hover:translate-x-1" />
-            </Link>
-          </Button>
-        </div>
+        <SponsorsCta />
       </SponsorsSectionShell>
     );
   }
 
+  const hasSponsors =
+    goldSponsors.length > 0 ||
+    silverSponsors.length > 0 ||
+    bronzeSponsors.length > 0;
+
   return (
     <SponsorsSectionShell>
-      <div className="mx-auto max-w-3xl text-center">
-        <Badge className="mb-4">Patrocinadores</Badge>
-        <h2 className="font-serif text-3xl font-bold tracking-tight text-foreground sm:text-4xl md:text-5xl">
-          Nossos <span className={"gradient-sponsors-text"}>Parceiros</span>
-        </h2>
-        <p className="mt-4 text-lg text-muted-foreground">
-          Empresas que acreditam no poder transformador do esporte e apoiam
-          nossa missão no sul do Piauí.
-        </p>
-      </div>
+      <SponsorsSectionHeader />
 
-      <div className="mt-16 space-y-12">
-        {goldSponsors.length > 0 ? (
-          <div>
-            <div className="mb-6 flex items-center justify-center gap-2">
-              <Crown className="size-5 text-jet-gold" />
-              <h3 className="font-serif text-xl font-semibold text-jet-gold">
-                Tier Ouro
-              </h3>
-            </div>
-            <div className="flex flex-wrap items-center justify-center gap-6">
-              {goldSponsors.map((sponsor) => (
-                <SponsorCard key={sponsor.id} sponsor={sponsor} />
-              ))}
-            </div>
-          </div>
-        ) : null}
+      {hasSponsors ? (
+        <div className={SPONSORS_TIERS_LAYOUT_CLASS}>
+          <SponsorsTierSection
+            tier="gold"
+            sponsors={goldSponsors}
+            gapClassName="gap-6"
+          />
+          <SponsorsTierSection
+            tier="silver"
+            sponsors={silverSponsors}
+            gapClassName="gap-6"
+          />
+          <SponsorsTierSection
+            tier="bronze"
+            sponsors={bronzeSponsors}
+            gapClassName="gap-4"
+          />
+        </div>
+      ) : (
+        <EmptySponsors />
+      )}
 
-        {silverSponsors.length > 0 ? (
-          <div>
-            <div className="mb-6 flex items-center justify-center gap-2">
-              <Medal className="size-5 text-muted-foreground" />
-              <h3 className="font-serif text-xl font-semibold text-muted-foreground">
-                Tier Prata
-              </h3>
-            </div>
-            <div className="flex flex-wrap items-center justify-center gap-6">
-              {silverSponsors.map((sponsor) => (
-                <SponsorCard key={sponsor.id} sponsor={sponsor} />
-              ))}
-            </div>
-          </div>
-        ) : null}
-
-        {bronzeSponsors.length > 0 ? (
-          <div>
-            <div className="mb-6 flex items-center justify-center gap-2">
-              <Award className="size-5 text-jet-bronze" />
-              <h3 className="font-serif text-xl font-semibold text-jet-bronze">
-                Tier Bronze
-              </h3>
-            </div>
-            <div className="flex flex-wrap items-center justify-center gap-4">
-              {bronzeSponsors.map((sponsor) => (
-                <SponsorCard key={sponsor.id} sponsor={sponsor} />
-              ))}
-            </div>
-          </div>
-        ) : null}
-      </div>
-
-      <div className="mt-16 text-center">
-        <p className="mb-6 text-lg text-muted-foreground">
-          Quer ver sua empresa aqui?
-        </p>
-        <Button asChild variant="outline" size="lg" className="group">
-          <Link href="/#pre-cadastro">
-            Torne-se um Patrocinador
-            <ArrowRight className="size-4 transition-transform group-hover:translate-x-1" />
-          </Link>
-        </Button>
-      </div>
+      <SponsorsCta />
     </SponsorsSectionShell>
   );
 }
