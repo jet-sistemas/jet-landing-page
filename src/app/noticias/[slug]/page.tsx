@@ -5,14 +5,10 @@ import { Suspense } from "react";
 import { Footer } from "@/components/layout/footer";
 import { Header } from "@/components/layout/header";
 import { ArticlePageContent } from "@/components/sections/article-page";
+import { RelatedArticlesLoader } from "@/components/sections/article-page/related-articles-loader";
+import { RelatedArticlesLoading } from "@/components/sections/article-page/related-articles-states";
 import { Sponsors, SponsorsFallback } from "@/components/sections/sponsors";
-import {
-  fetchArticleBySlug,
-  fetchLatestArticles,
-  fetchRelatedArticles,
-  getStrapiImageUrl,
-} from "@/lib/strapi";
-import { Article } from "@/types/entities";
+import { fetchArticleBySlug, getStrapiImageUrl } from "@/lib/strapi";
 
 type ArticlePageProps = {
   params: Promise<{ slug: string }>;
@@ -31,7 +27,7 @@ export async function generateMetadata({
   }
 
   const coverUrl = getStrapiImageUrl(
-    article.cover?.formats?.large?.url || article.cover?.url
+    article.cover?.formats?.large?.url || article.cover?.url,
   );
 
   return {
@@ -62,24 +58,18 @@ export default async function ArticlePage({ params }: ArticlePageProps) {
     notFound();
   }
 
-  // Busca artigos relacionados (mesma categoria) ou mais recentes
-  let relatedArticles = article?.category?.slug
-    ? await fetchRelatedArticles(article.category.slug, slug, 4)
-    : [];
-
-  // Se não houver artigos relacionados suficientes, busca os mais recentes
-  if (relatedArticles.length < 3) {
-    relatedArticles = await fetchLatestArticles(slug, 4);
-  }
-
   return (
     <>
       <Header />
       <main className="min-h-screen pt-17 md:pt-21">
-        <ArticlePageContent
-          article={article as Article}
-          relatedArticles={relatedArticles}
-        />
+        <ArticlePageContent article={article} />
+        <Suspense fallback={<RelatedArticlesLoading />}>
+          <RelatedArticlesLoader
+            slug={slug}
+            categorySlug={article.category?.slug}
+            categoryName={article.category?.name}
+          />
+        </Suspense>
         <Suspense fallback={<SponsorsFallback />}>
           <Sponsors />
         </Suspense>

@@ -1,3 +1,5 @@
+"use client";
+
 import { Badge } from "@/components/ui/badge";
 import {
   Card,
@@ -7,42 +9,86 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { getStrapiImageUrl } from "@/lib/strapi";
-import { cn, formatDate } from "@/lib/utils";
+import { ArticleDates } from "@/components/article-dates";
+import { cn } from "@/lib/utils";
 import { Article } from "@/types/entities";
-import { ArrowRight, Calendar, ImageIcon } from "lucide-react";
+import { ArrowRight, Calendar, ImageIcon, Loader2 } from "lucide-react";
 import Image from "next/image";
-import Link from "next/link";
+import { useRouter } from "next/navigation";
+import { KeyboardEvent } from "react";
 
 type StrapiPublicationCardProps = {
   article: Article;
   featured?: boolean;
-  strapiUrl?: string;
+  isNavigating?: boolean;
+  isGridBusy?: boolean;
+  onNavigate?: (slug: string) => void;
 };
 
 export function StrapiPublicationCard({
   article,
   featured = false,
+  isNavigating = false,
+  isGridBusy = false,
+  onNavigate,
 }: StrapiPublicationCardProps) {
+  const router = useRouter();
   const imageUrl = getStrapiImageUrl(
     article?.cover?.formats?.small?.url ??
       article?.cover?.formats?.thumbnail?.url,
   );
   const slug = article?.slug || article.id.toString();
   const description = article?.description || "";
+  const href = `/noticias/${slug}`;
+
+  const handleNavigate = () => {
+    if (isGridBusy) return;
+    onNavigate?.(slug);
+    router.push(href);
+  };
+
+  const handlePrefetch = () => {
+    if (isGridBusy) return;
+    router.prefetch(href);
+  };
+
+  const handleKeyDown = (event: KeyboardEvent<HTMLDivElement>) => {
+    if (event.key !== "Enter" && event.key !== " ") return;
+    event.preventDefault();
+    handleNavigate();
+  };
 
   return (
     <Card
+      role="link"
+      tabIndex={isGridBusy ? -1 : 0}
+      aria-label={`Ler artigo: ${article?.title}`}
+      aria-busy={isNavigating}
+      onClick={handleNavigate}
+      onMouseEnter={handlePrefetch}
+      onFocus={handlePrefetch}
+      onKeyDown={handleKeyDown}
       className={cn(
-        "hover:cursor-pointer",
+        "relative hover:cursor-pointer",
         "group overflow-hidden border-border/50 bg-card/80 transition-all hover:border-accent/30 hover:shadow-lg",
         featured && "lg:col-span-2 lg:row-span-1 pt-0",
+        isGridBusy && !isNavigating && "pointer-events-none opacity-50",
+        isNavigating && "pointer-events-none opacity-70",
       )}
     >
+      {isNavigating && (
+        <div
+          className="absolute inset-0 z-10 flex items-center justify-center bg-background/60 backdrop-blur-[1px]"
+          aria-hidden
+        >
+          <Loader2 className="size-8 animate-spin text-accent" />
+        </div>
+      )}
+
       {featured && (
         <div className="h-1 w-full bg-linear-to-r from-primary to-accent" />
       )}
 
-      {/* Image */}
       <div
         className={cn(
           "relative overflow-hidden bg-muted",
@@ -63,7 +109,6 @@ export function StrapiPublicationCard({
           </div>
         )}
 
-        {/* Badges */}
         <div className="absolute top-4 left-4 flex gap-2">
           {featured && (
             <Badge className="bg-green-500/90 text-white font-bold backdrop-blur-sm">
@@ -80,14 +125,13 @@ export function StrapiPublicationCard({
           )}
         </div>
 
-        {/* Overlay on hover */}
         <div className="absolute inset-0 bg-gradient-to-t from-background/80 via-transparent to-transparent opacity-0 transition-opacity group-hover:opacity-100" />
       </div>
 
       <CardHeader className="pb-2">
-        <div className="flex items-center gap-2 text-xs text-muted-foreground">
-          <Calendar className="size-3" />
-          {formatDate(article?.publishedAt || article?.createdAt)}
+        <div className="flex items-start gap-2 text-muted-foreground">
+          <Calendar className="mt-0.5 size-3 shrink-0" />
+          <ArticleDates article={article} size="sm" />
         </div>
         <CardTitle
           className={cn(
@@ -104,13 +148,10 @@ export function StrapiPublicationCard({
         >
           {description}
         </CardDescription>
-        <Link
-          href={`/noticias/${slug}`}
-          className="mt-4 inline-flex items-center gap-1 text-sm font-medium text-accent hover:underline"
-        >
+        <span className="mt-4 inline-flex items-center gap-1 text-sm font-medium text-accent group-hover:underline">
           Ler mais
           <ArrowRight className="size-3 transition-transform group-hover:translate-x-1" />
-        </Link>
+        </span>
       </CardContent>
     </Card>
   );

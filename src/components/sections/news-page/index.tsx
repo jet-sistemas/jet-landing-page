@@ -12,6 +12,12 @@ import { NewsFilters } from "./news-filters";
 import { NewsGrid } from "./news-grid";
 import { NewsPagination } from "./news-pagination";
 import { FeaturedArticle } from "./featured-article";
+import { FeaturedArticleSkeleton } from "./featured-article-skeleton";
+import {
+  getArticleSlug,
+  NEWS_GRID_FULL_SKELETON_COUNT,
+  NEWS_GRID_SKELETON_COUNT,
+} from "./news-grid.constants";
 import {
   GoldSponsorsSidebar,
   GoldSponsorsCompact,
@@ -29,7 +35,8 @@ export function NewsPageContent() {
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
-  // Pagination state
+  const [navigatingSlug, setNavigatingSlug] = useState<string | null>(null);
+  const isArticlesBusy = navigatingSlug !== null;
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
   const [totalItems, setTotalItems] = useState(0);
@@ -134,6 +141,7 @@ export function NewsPageContent() {
       try {
         setIsLoading(true);
         setError(null);
+        setNavigatingSlug(null);
 
         const result = await fetchArticles({
           page: currentPage,
@@ -237,9 +245,22 @@ export function NewsPageContent() {
         </div>
 
         {/* Featured Article - only when no filters active */}
+        {isLoading && !hasActiveFilters && (
+          <div className="mb-10">
+            <FeaturedArticleSkeleton />
+          </div>
+        )}
+
         {featuredArticle && !isLoading && (
           <div className="mb-10">
-            <FeaturedArticle article={featuredArticle} />
+            <FeaturedArticle
+              article={featuredArticle}
+              isNavigating={
+                navigatingSlug === getArticleSlug(featuredArticle)
+              }
+              isGridBusy={isArticlesBusy}
+              onNavigate={setNavigatingSlug}
+            />
           </div>
         )}
 
@@ -252,27 +273,18 @@ export function NewsPageContent() {
 
         {/* Main Content with Sidebar */}
         <div className="flex flex-col gap-8 lg:flex-row">
-          {/* Articles Grid - Main Content */}
           <div className="flex-1 min-w-0">
-            <NewsGrid articles={gridArticles} isLoading={isLoading} />
-
-            {/* Pagination */}
-            {!isLoading && !error && articles.length > 0 && (
-              <div className="border-t border-border/50 pt-8 mt-10">
-                <NewsPagination
-                  currentPage={currentPage}
-                  totalPages={totalPages}
-                  totalItems={totalItems}
-                  itemsPerPage={ITEMS_PER_PAGE}
-                  onPageChange={handlePageChange}
-                  isLoading={isLoading}
-                />
-              </div>
-            )}
-
-            <div className="mt-10 border-t border-border/50 pt-10 lg:hidden">
-              <GoldSponsorsCompact />
-            </div>
+            <NewsGrid
+              articles={gridArticles}
+              isLoading={isLoading}
+              skeletonCount={
+                hasActiveFilters
+                  ? NEWS_GRID_FULL_SKELETON_COUNT
+                  : NEWS_GRID_SKELETON_COUNT
+              }
+              navigatingSlug={navigatingSlug}
+              onNavigate={setNavigatingSlug}
+            />
           </div>
 
           <div className="hidden lg:block lg:w-72 lg:shrink-0">
@@ -280,6 +292,23 @@ export function NewsPageContent() {
               <GoldSponsorsSidebar />
             </div>
           </div>
+        </div>
+
+        {!isLoading && !error && articles.length > 0 && (
+          <div className="mt-10 border-t border-border/50 pt-8">
+            <NewsPagination
+              currentPage={currentPage}
+              totalPages={totalPages}
+              totalItems={totalItems}
+              itemsPerPage={ITEMS_PER_PAGE}
+              onPageChange={handlePageChange}
+              isLoading={isLoading}
+            />
+          </div>
+        )}
+
+        <div className="mt-10 border-t border-border/50 pt-10 lg:hidden">
+          <GoldSponsorsCompact />
         </div>
       </div>
     </section>

@@ -127,7 +127,7 @@ export function Footer() {
                 </Link>
               ))}
               <Link
-                href="#pre-cadastro"
+                href="/#pre-cadastro"
                 className="group inline-flex items-center gap-1 font-medium text-secondary transition-colors hover:text-secondary/80"
               >
                 Torne-se um Parceiro

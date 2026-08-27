@@ -1,9 +1,11 @@
 "use client";
 
 import ReactMarkdown from "react-markdown";
+import rehypeRaw from "rehype-raw";
+import remarkGfm from "remark-gfm";
 
 import { RichTextBlock } from "@/types/entities";
-import { cn } from "@/lib/utils";
+import { cn, isInternalHref, normalizeHref } from "@/lib/utils";
 
 type BlockRichTextProps = {
   block: RichTextBlock;
@@ -17,6 +19,8 @@ export function BlockRichText({ block }: BlockRichTextProps) {
   return (
     <div className="my-8">
       <ReactMarkdown
+        remarkPlugins={[remarkGfm]}
+        rehypePlugins={[rehypeRaw]}
         components={{
           // Headings
           h1: ({ children }) => (
@@ -63,16 +67,24 @@ export function BlockRichText({ block }: BlockRichTextProps) {
           ),
 
           // Links
-          a: ({ href, children }) => (
-            <a
-              href={href}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="text-accent hover:text-accent/80 underline underline-offset-4 transition-colors"
-            >
-              {children}
-            </a>
-          ),
+          a: ({ href, children }) => {
+            const normalizedHref = normalizeHref(href);
+            const isExternal =
+              normalizedHref && !isInternalHref(normalizedHref);
+
+            return (
+              <a
+                href={normalizedHref}
+                {...(isExternal && {
+                  target: "_blank",
+                  rel: "noopener noreferrer",
+                })}
+                className="text-accent hover:text-accent/80 underline underline-offset-4 transition-colors"
+              >
+                {children}
+              </a>
+            );
+          },
 
           // Strong & Emphasis
           strong: ({ children }) => (
@@ -80,6 +92,15 @@ export function BlockRichText({ block }: BlockRichTextProps) {
           ),
           em: ({ children }) => (
             <em className="italic text-foreground/90">{children}</em>
+          ),
+          del: ({ children }) => (
+            <del className="line-through text-foreground/70">{children}</del>
+          ),
+          s: ({ children }) => (
+            <s className="line-through text-foreground/70">{children}</s>
+          ),
+          u: ({ children }) => (
+            <u className="underline underline-offset-2">{children}</u>
           ),
 
           // Blockquote
