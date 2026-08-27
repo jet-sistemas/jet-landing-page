@@ -9,7 +9,8 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { getStrapiImageUrl } from "@/lib/strapi";
-import { cn, formatDate } from "@/lib/utils";
+import { ArticleDates } from "@/components/article-dates";
+import { cn } from "@/lib/utils";
 import { Article } from "@/types/entities";
 import { ArrowRight, Calendar, ImageIcon, Loader2 } from "lucide-react";
 import Image from "next/image";
@@ -128,9 +129,9 @@ export function StrapiPublicationCard({
       </div>
 
       <CardHeader className="pb-2">
-        <div className="flex items-center gap-2 text-xs text-muted-foreground">
-          <Calendar className="size-3" />
-          {formatDate(article?.publishedAt || article?.createdAt)}
+        <div className="flex items-start gap-2 text-muted-foreground">
+          <Calendar className="mt-0.5 size-3 shrink-0" />
+          <ArticleDates article={article} size="sm" />
         </div>
         <CardTitle
           className={cn(

@@ -38,6 +38,25 @@ export function formatPhone(value: string) {
     .replace(/(\d{5})(\d)/, "$1-$2");
 }
 
+const PROTOCOL_PATTERN = /^[a-z][a-z0-9+.-]*:/i;
+
+export function isInternalHref(href: string): boolean {
+  return href.startsWith("/") || href.startsWith("#");
+}
+
+export function normalizeHref(href: string | undefined): string | undefined {
+  if (!href) return undefined;
+
+  const trimmed = href.trim();
+  if (!trimmed) return undefined;
+
+  if (isInternalHref(trimmed) || PROTOCOL_PATTERN.test(trimmed)) {
+    return trimmed;
+  }
+
+  return `https://${trimmed}`;
+}
+
 export function formatDate(dateString: string): string {
   try {
     const date = new Date(dateString);

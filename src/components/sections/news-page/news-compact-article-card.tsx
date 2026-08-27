@@ -7,7 +7,8 @@ import type { KeyboardEvent } from "react";
 
 import { Badge } from "@/components/ui/badge";
 import { getStrapiImageUrl } from "@/lib/strapi";
-import { cn, formatDate } from "@/lib/utils";
+import { ArticleDates } from "@/components/article-dates";
+import { cn } from "@/lib/utils";
 import { Article } from "@/types/entities";
 
 type NewsCompactArticleCardProps = {
@@ -95,11 +96,9 @@ export function NewsCompactArticleCard({
       </div>
 
       <div className="p-4">
-        <div className="mb-2 flex items-center gap-1.5 text-xs text-muted-foreground">
-          <Calendar className="size-3" />
-          <time dateTime={article.publishedAt}>
-            {formatDate(article.publishedAt || article.createdAt)}
-          </time>
+        <div className="mb-2 flex items-start gap-1.5 text-muted-foreground">
+          <Calendar className="mt-0.5 size-3 shrink-0" />
+          <ArticleDates article={article} size="sm" />
         </div>
 
         <h3 className="line-clamp-2 font-serif text-base font-semibold leading-snug text-foreground transition-colors group-hover:text-accent">

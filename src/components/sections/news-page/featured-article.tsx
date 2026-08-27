@@ -7,7 +7,8 @@ import type { KeyboardEvent } from "react";
 
 import { Badge } from "@/components/ui/badge";
 import { getStrapiImageUrl } from "@/lib/strapi";
-import { cn, formatDate } from "@/lib/utils";
+import { ArticleDates } from "@/components/article-dates";
+import { cn } from "@/lib/utils";
 import { Article } from "@/types/entities";
 
 import { getArticleSlug } from "./news-grid.constants";
@@ -116,11 +117,9 @@ export function FeaturedArticle({
         </div>
 
         <div className="flex flex-col justify-center p-6 sm:p-8 lg:p-10">
-          <div className="mb-4 flex items-center gap-2 text-sm text-muted-foreground">
-            <Calendar className="size-4" />
-            <time dateTime={article?.publishedAt}>
-              {formatDate(article?.publishedAt || article?.createdAt)}
-            </time>
+          <div className="mb-4 flex items-start gap-2 text-muted-foreground">
+            <Calendar className="mt-0.5 size-4 shrink-0" />
+            <ArticleDates article={article} variant="full" />
           </div>
 
           <h2 className="mb-4 font-serif text-2xl leading-tight font-bold text-foreground transition-colors group-hover:text-accent sm:text-3xl lg:text-4xl">

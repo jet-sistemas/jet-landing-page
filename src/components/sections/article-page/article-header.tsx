@@ -7,7 +7,7 @@ import Link from "next/link";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { getStrapiImageUrl } from "@/lib/strapi";
-import { formatDate } from "@/lib/utils";
+import { ArticleDates } from "@/components/article-dates";
 
 import { GoldSponsorsCarousel } from "./gold-sponsors-carousel";
 import { Article } from "@/types/entities";
@@ -92,11 +92,9 @@ export function ArticleHeader({ article }: ArticleHeaderProps) {
               {/* Main content */}
               <div className="flex-1 min-w-0">
                 {/* Date */}
-                <div className="flex items-center gap-2 text-sm text-muted-foreground mb-4">
-                  <Calendar className="size-4" />
-                  <time dateTime={article.publishedAt}>
-                    {formatDate(article.publishedAt || article.createdAt)}
-                  </time>
+                <div className="mb-4 flex items-start gap-2 text-muted-foreground">
+                  <Calendar className="mt-0.5 size-4 shrink-0" />
+                  <ArticleDates article={article} variant="full" />
                 </div>
 
                 {/* Title */}

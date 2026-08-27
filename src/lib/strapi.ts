@@ -73,8 +73,7 @@ export async function fetchStrapiContent<T = Article>(
       url.searchParams.append("sort", options.sort);
     }
   } else {
-    // Sort padrão: por data de publicação (mais recente primeiro)
-    url.searchParams.append("sort", "publishedAt:desc");
+    url.searchParams.append("sort", "createdAt:desc");
   }
 
   // Pagination
@@ -164,7 +163,7 @@ export async function fetchArticles(
 
   // Determina a ordenação
   const sort =
-    options.sortOrder === "oldest" ? "publishedAt:asc" : "publishedAt:desc";
+    options.sortOrder === "oldest" ? "createdAt:asc" : "createdAt:desc";
 
   return fetchStrapiContent<Article>(ContentTypeEnum.ARTICLES, {
     populate: [
@@ -303,7 +302,7 @@ export async function fetchLatestArticles(
     ],
     filters,
     pagination: { limit },
-    sort: "publishedAt:desc",
+    sort: "createdAt:desc",
   });
 
   return result.data || [];
