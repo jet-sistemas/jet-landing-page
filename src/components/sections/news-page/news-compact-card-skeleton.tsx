@@ -14,7 +14,7 @@ export function NewsCompactCardSkeleton({
     <article
       aria-hidden
       className={cn(
-        "h-full overflow-hidden rounded-xl border border-border/50 bg-card/80",
+        "h-full overflow-hidden rounded-xl border border-border/50 not-dark:border-zinc-300 bg-card/80",
         isPlaceholder && "border-dashed border-border/30 bg-muted/10",
       )}
     >
