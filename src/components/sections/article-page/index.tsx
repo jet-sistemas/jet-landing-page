@@ -11,7 +11,7 @@ type ArticlePageContentProps = {
 
 export function ArticlePageContent({ article }: ArticlePageContentProps) {
   return (
-    <article className="relative overflow-hidden not-dark:bg-muted/80">
+    <article className="relative overflow-hidden not-dark:bg-[var(--article-surface)]">
       <div className="pointer-events-none absolute inset-0 overflow-hidden">
         <div className="absolute -top-1/4 -right-1/4 size-[600px] rounded-full bg-secondary/5 blur-3xl" />
         <div className="absolute -bottom-1/4 -left-1/4 size-[600px] rounded-full bg-accent/5 blur-3xl" />
