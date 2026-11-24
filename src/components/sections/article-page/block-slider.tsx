@@ -181,12 +181,10 @@ export function BlockSlider({ block }: BlockSliderProps) {
         </div>
       )}
 
-      {/* Caption */}
-      {block.files[selectedIndex]?.caption && (
-        <figcaption className="mt-3 text-center text-sm text-muted-foreground italic">
-          {block.files[selectedIndex].caption}
-        </figcaption>
-      )}
+      {/* Caption — altura reservada evita layout shift entre slides com/sem legenda */}
+      <figcaption className="mt-3 min-h-5 text-center text-sm leading-5 text-muted-foreground italic">
+        {block.files[selectedIndex]?.caption ?? "\u00A0"}
+      </figcaption>
     </figure>
   );
 }
