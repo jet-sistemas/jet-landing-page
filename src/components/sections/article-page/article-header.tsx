@@ -29,7 +29,7 @@ export function ArticleHeader({ article }: ArticleHeaderProps) {
   );
 
   return (
-    <header className="relative">
+    <header className="relative not-dark:bg-[var(--article-surface)] dark:bg-background">
       {/* Hero Cover Image */}
       <div className="relative h-[300px] sm:h-[400px] lg:h-[500px] w-full overflow-hidden">
         {coverUrl ? (
@@ -52,8 +52,8 @@ export function ArticleHeader({ article }: ArticleHeaderProps) {
           </div>
         )}
 
-        {/* Gradient overlay */}
-        <div className="absolute inset-0 bg-gradient-to-t from-background via-background/50 to-transparent" />
+        <div className="article-hero-overlay article-hero-overlay-light" aria-hidden />
+        <div className="article-hero-overlay article-hero-overlay-dark" aria-hidden />
 
         {/* Back button */}
         <div className="absolute top-4 left-4 z-10">
@@ -85,9 +85,9 @@ export function ArticleHeader({ article }: ArticleHeaderProps) {
       </div>
 
       {/* Article Meta */}
-      <div className="container mx-auto px-4">
-        <div className="relative -mt-24 sm:-mt-32 lg:-mt-40 z-10">
-          <div className="rounded-2xl border border-border/50 bg-card/95 backdrop-blur-xl p-6 sm:p-8 lg:p-10 shadow-xl">
+      <div className="container relative z-10 mx-auto px-4">
+        <div className="relative -mt-24 sm:-mt-32 lg:-mt-40">
+          <div className="rounded-2xl border border-border/50 not-dark:border-zinc-300 bg-card/95 backdrop-blur-xl p-6 sm:p-8 lg:p-10 shadow-lg shadow-black/5 not-dark:ring-1 not-dark:ring-zinc-200 dark:shadow-xl">
             <div className="flex flex-col lg:flex-row lg:items-stretch lg:gap-8">
               {/* Main content */}
               <div className="flex-1 min-w-0">
@@ -111,7 +111,7 @@ export function ArticleHeader({ article }: ArticleHeaderProps) {
 
                 {/* Author Info */}
                 {article.author && (
-                  <div className="flex items-center gap-4 pt-6 border-t border-border/50">
+                  <div className="flex items-center gap-4 pt-6 border-t border-border/50 not-dark:border-zinc-200">
                     {authorAvatarUrl ? (
                       <Image
                         src={authorAvatarUrl}
@@ -136,13 +136,13 @@ export function ArticleHeader({ article }: ArticleHeaderProps) {
               </div>
 
               {/* Sponsors Carousel - Desktop */}
-              <div className="hidden min-h-0 lg:flex lg:w-64 lg:shrink-0 lg:flex-col lg:border-l lg:border-border/50 lg:pl-8">
+              <div className="hidden min-h-0 lg:flex lg:w-64 lg:shrink-0 lg:flex-col lg:border-l lg:border-border/50 not-dark:lg:border-zinc-200 lg:pl-8">
                 <GoldSponsorsCarousel />
               </div>
             </div>
 
             {/* Sponsors Carousel - Mobile/Tablet */}
-            <div className="lg:hidden mt-8 pt-8 border-t border-border/50">
+            <div className="lg:hidden mt-8 pt-8 border-t border-border/50 not-dark:border-zinc-200">
               <GoldSponsorsCarousel />
             </div>
           </div>

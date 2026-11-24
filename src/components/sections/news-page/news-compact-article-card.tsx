@@ -54,7 +54,7 @@ export function NewsCompactArticleCard({
       onClick={handleNavigate}
       onKeyDown={handleKeyDown}
       className={cn(
-        "group relative h-full overflow-hidden rounded-xl border border-border/50 bg-card/80 transition-all hover:cursor-pointer hover:border-accent/30 hover:shadow-lg",
+        "group relative h-full overflow-hidden rounded-xl border border-border/50 not-dark:border-zinc-300 bg-card/80 transition-all hover:cursor-pointer hover:border-accent/30 not-dark:hover:border-zinc-400 hover:shadow-lg",
         isGridBusy && !isNavigating && "pointer-events-none opacity-50",
         isNavigating && "pointer-events-none opacity-70",
       )}

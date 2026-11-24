@@ -46,19 +46,19 @@ export function BlockRichText({ block }: BlockRichTextProps) {
 
           // Paragraph
           p: ({ children }) => (
-            <p className="text-foreground/90 text-base sm:text-lg leading-relaxed mb-6">
+            <p className="text-zinc-900 dark:text-foreground/90 text-base sm:text-lg leading-relaxed mb-6">
               {children}
             </p>
           ),
 
           // Lists
           ul: ({ children }) => (
-            <ul className="list-disc list-outside ml-6 mb-6 space-y-2 text-foreground/90">
+            <ul className="list-disc list-outside ml-6 mb-6 space-y-2 text-zinc-900 dark:text-foreground/90">
               {children}
             </ul>
           ),
           ol: ({ children }) => (
-            <ol className="list-decimal list-outside ml-6 mb-6 space-y-2 text-foreground/90">
+            <ol className="list-decimal list-outside ml-6 mb-6 space-y-2 text-zinc-900 dark:text-foreground/90">
               {children}
             </ol>
           ),
@@ -88,10 +88,14 @@ export function BlockRichText({ block }: BlockRichTextProps) {
 
           // Strong & Emphasis
           strong: ({ children }) => (
-            <strong className="font-bold text-foreground">{children}</strong>
+            <strong className="font-bold text-zinc-900 dark:text-foreground">
+              {children}
+            </strong>
           ),
           em: ({ children }) => (
-            <em className="italic text-foreground/90">{children}</em>
+            <em className="italic text-zinc-900 dark:text-foreground/90">
+              {children}
+            </em>
           ),
           del: ({ children }) => (
             <del className="line-through text-foreground/70">{children}</del>
@@ -105,7 +109,7 @@ export function BlockRichText({ block }: BlockRichTextProps) {
 
           // Blockquote
           blockquote: ({ children }) => (
-            <blockquote className="border-l-4 border-accent/50 bg-accent/5 pl-6 py-4 my-6 italic text-foreground/80">
+            <blockquote className="border-l-4 border-accent/50 bg-accent/5 pl-6 py-4 my-6 italic text-zinc-800 dark:text-foreground/80">
               {children}
             </blockquote>
           ),

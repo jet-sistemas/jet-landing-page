@@ -83,6 +83,7 @@
   --secondary-foreground: #1A1901;
 
   --muted: oklch(0.96 0 0);
+  --article-surface: color-mix(in oklch, var(--muted) 80%, var(--background));
   --muted-foreground: oklch(0.5 0.02 240);
   --accent: #FF336C;
   --accent-foreground: #E9E9FB;
@@ -219,6 +220,44 @@
 }
 
 @layer utilities {
+  .bg-article-surface {
+    background-color: var(--article-surface);
+  }
+
+  .article-hero-overlay {
+    pointer-events: none;
+    position: absolute;
+    inset: 0;
+  }
+
+  .article-hero-overlay-light {
+    display: none;
+    background: linear-gradient(
+      to top,
+      var(--article-surface) 0%,
+      rgb(from var(--article-surface) r g b / 0.55) 46%,
+      rgb(from var(--article-surface) r g b / 0) 100%
+    );
+  }
+
+  html:not(.dark) .article-hero-overlay-light {
+    display: block;
+  }
+
+  .article-hero-overlay-dark {
+    display: none;
+    background: linear-gradient(
+      to top,
+      var(--background) 0%,
+      rgb(from var(--background) r g b / 0.5) 50%,
+      rgb(from var(--background) r g b / 0) 100%
+    );
+  }
+
+  html.dark .article-hero-overlay-dark {
+    display: block;
+  }
+
   .bg-member-card-gradient {
     background: linear-gradient(166deg, var(--color-jet-navy) 24%, var(--color-jet-blue) 67%, rgba(47, 101, 156, 1) 100%);
   }
